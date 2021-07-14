@@ -10,6 +10,7 @@ import java.util.List;
 public class PackageReadingService {
     private PackageReadingDao packageReadingDao;
 
+
     public PackageReadingService(PackageReadingDao packageReadingDao) {
         this.packageReadingDao = packageReadingDao;
     }
@@ -20,5 +21,8 @@ public class PackageReadingService {
 
     public List<PackageInfo> listPackages() {
         return packageReadingDao.listPackages();
+    }
+
+    public void subscriptPackage(String customerId, String packageId) {
     }
 }

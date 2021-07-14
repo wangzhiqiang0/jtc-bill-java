@@ -1,17 +1,30 @@
 package uk.tw.jtc.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import uk.tw.jtc.service.BillingService;
+import uk.tw.jtc.service.PackageReadingService;
 
 
 @RestController
 @RequestMapping("/billing")
 public class BillingReadingController {
+    private BillingService billingService;
+    private PackageReadingService packageReadingService;
 
+    public BillingReadingController(BillingService billingService, PackageReadingService packageReadingService) {
+        this.billingService = billingService;
+        this.packageReadingService = packageReadingService;
+    }
 
-    @GetMapping("/currentBillingPeriod")
-    public ResponseEntity getCurrentBillingPeriod(@RequestHeader("customerId") String customerId){
-
-        return null;
+    @GetMapping("/subscriptPackage/{packageId}")
+    public ResponseEntity subscriptPackage(@RequestHeader("customerId") String customerId,@PathVariable String packageId){
+        if (null != packageReadingService.getPackageByCustomerID(customerId)) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        billingService.subscriptPackage(customerId,packageId);
+        return ResponseEntity.accepted().build();
     }
 }

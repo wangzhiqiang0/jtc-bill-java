@@ -63,23 +63,5 @@ public class PackageReadingControllerTest {
         assertThat(packageReadingController.listPackages().getBody()).isEqualTo(packageInfoList);
     }
 
-    @Test
-    public void givenCustomerIdAndPackageIdSubscriptPackage() {
-        assertThat(packageReadingController.subscriptPackage(CUSTOMER_ID,packageInfoList.get(0).getPackageId()).getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
-    }
-    @Test
-    public void givenCustomerIdAndPackageIdSubscriptPackageReturnErrorResponseWhenSubscriptDone() {
-        PackageReadingController packageReadingControllerTemp = new PackageReadingController(new PackageReadingService(new PackageReadingDao() {
-            @Override
-            public PackageInfo getPackageByCustomerID(String customerID) {
-                return packageInfoList.get(0);
-            }
 
-            @Override
-            public List<PackageInfo> listPackages() {
-                return packageInfoList;
-            }
-        }));
-        assertThat(packageReadingControllerTemp.subscriptPackage(CUSTOMER_ID,packageInfoList.get(0).getPackageId()).getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 }

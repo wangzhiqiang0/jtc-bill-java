@@ -3,6 +3,7 @@ package uk.tw.jtc.model;
 import java.math.BigDecimal;
 
 public class PackageInfo {
+    private String packageId;
     private String name;
     private BigDecimal subscriptionFee;
     private int phoneLimit;
@@ -11,7 +12,8 @@ public class PackageInfo {
     private BigDecimal extraSMSFee;
     public PackageInfo() {
     }
-    public PackageInfo(String name, BigDecimal subscriptionFee, int phoneLimit, int smsLimit, BigDecimal extraPhoneFee, BigDecimal extraSMSFee) {
+    public PackageInfo(String packageId,String name, BigDecimal subscriptionFee, int phoneLimit, int smsLimit, BigDecimal extraPhoneFee, BigDecimal extraSMSFee) {
+        this.packageId = packageId;
         this.name = name;
         this.subscriptionFee = subscriptionFee;
         this.phoneLimit = phoneLimit;
@@ -68,5 +70,13 @@ public class PackageInfo {
 
     public void setExtraSMSFee(BigDecimal extraSMSFee) {
         this.extraSMSFee = extraSMSFee;
+    }
+
+    public String getPackageId() {
+        return packageId;
+    }
+
+    public void setPackageId(String packageId) {
+        this.packageId = packageId;
     }
 }

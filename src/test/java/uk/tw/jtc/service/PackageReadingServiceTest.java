@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.tw.jtc.dao.PackageReadingDao;
 import uk.tw.jtc.model.PackageInfo;
+import uk.tw.jtc.utils.TestUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -14,15 +15,11 @@ public class PackageReadingServiceTest {
 
     private static final String CUSTOMER_ID = "10101010";
     private PackageReadingService packageReadingService;
-    final List<PackageInfo> packageInfoList = new ArrayList<>();
+    List<PackageInfo> packageInfoList;
     @BeforeEach
     public void setUp() {
-        packageInfoList.add(new PackageInfo("Starter",new BigDecimal(38),
-                10,10,new BigDecimal(1),new BigDecimal(0.5)));
-        packageInfoList.add(new PackageInfo("Standard",new BigDecimal(58),
-                30,40,new BigDecimal(1),new BigDecimal(0.5)));
-        packageInfoList.add(new PackageInfo("Starter",new BigDecimal(188),
-                300,200,new BigDecimal(1),new BigDecimal(0.5)));
+        packageInfoList =TestUtils.generatePackageInfoList();
+
         PackageReadingDao packageReadingDao = new PackageReadingDao() {
             @Override
             public PackageInfo getPackageByCustomerID(String customerID) {

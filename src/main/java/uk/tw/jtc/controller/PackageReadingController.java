@@ -2,10 +2,7 @@ package uk.tw.jtc.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uk.tw.jtc.model.PackageInfo;
 import uk.tw.jtc.service.PackageReadingService;
 
@@ -37,4 +34,13 @@ public class PackageReadingController {
         }
         return ResponseEntity.ok(packageInfoList);
     }
+
+    @GetMapping("/subscriptPackage/{packageId}")
+    public ResponseEntity subscriptPackage(@RequestHeader("customerId") String customerId,@PathVariable String packageId){
+        if (null != packageReadingService.getPackageByCustomerID(customerId)) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        return null;
+    }
+
 }

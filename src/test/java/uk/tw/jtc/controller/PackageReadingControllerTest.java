@@ -6,9 +6,7 @@ import org.springframework.http.HttpStatus;
 import uk.tw.jtc.dao.PackageReadingDao;
 import uk.tw.jtc.model.PackageInfo;
 import uk.tw.jtc.service.PackageReadingService;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
+import uk.tw.jtc.utils.TestUtils;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -18,20 +16,15 @@ public class PackageReadingControllerTest {
     private PackageReadingController packageReadingController;
     private PackageReadingService packageReadingService;
 
-    final List<PackageInfo> packageInfoList = new ArrayList<>();
+    List<PackageInfo> packageInfoList;
 
     @BeforeEach
     public void setUp() {
-        packageInfoList.add(new PackageInfo("Starter",new BigDecimal(38),
-                10,10,new BigDecimal(1),new BigDecimal(0.5)));
-        packageInfoList.add(new PackageInfo("Standard",new BigDecimal(58),
-                30,40,new BigDecimal(1),new BigDecimal(0.5)));
-        packageInfoList.add(new PackageInfo("Starter",new BigDecimal(188),
-                300,200,new BigDecimal(1),new BigDecimal(0.5)));
+        packageInfoList = TestUtils.generatePackageInfoList();
         PackageReadingDao packageReadingDao = new PackageReadingDao() {
             @Override
             public PackageInfo getPackageByCustomerID(String customerID) {
-                return packageInfoList.get(0);
+                return null;
             }
 
             @Override
@@ -44,28 +37,49 @@ public class PackageReadingControllerTest {
     }
     @Test
     public void givenCustomerIdGetSubscriptionPackageShouldReturnPackage() {
-        assertThat(packageReadingController.getSubscriptionPackage(CUSTOMER_ID).getBody()).isEqualTo(packageInfoList.get(0));
-    }
-
-    @Test
-    public void givenCustomerIdGetSubscriptionPackageShouldReturnShouldReturnErrorResponse() {
-        PackageReadingService packageReadingServiceTemp = new PackageReadingService(new PackageReadingDao() {
+        PackageReadingController packageReadingControllerTemp = new PackageReadingController(new PackageReadingService(new PackageReadingDao() {
             @Override
             public PackageInfo getPackageByCustomerID(String customerID) {
-                return null;
+                return packageInfoList.get(0);
             }
 
             @Override
             public List<PackageInfo> listPackages() {
-                return null;
+                return packageInfoList;
             }
-        });
-        packageReadingController = new PackageReadingController(packageReadingServiceTemp);
+        }));
+        assertThat(packageReadingControllerTemp.getSubscriptionPackage(CUSTOMER_ID).getBody()).isEqualTo(packageInfoList.get(0));
+    }
+
+    @Test
+    public void givenCustomerIdGetSubscriptionPackageShouldReturnShouldReturnErrorResponse() {
+
+        packageReadingController = new PackageReadingController(packageReadingService);
         assertThat(packageReadingController.getSubscriptionPackage(CUSTOMER_ID).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
     public void listPackagesShouldReturnPackageList() {
         assertThat(packageReadingController.listPackages().getBody()).isEqualTo(packageInfoList);
+    }
+
+    @Test
+    public void givenCustomerIdAndPackageIdSubscriptPackage() {
+        assertThat(packageReadingController.subscriptPackage(CUSTOMER_ID,packageInfoList.get(0).getPackageId()).getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+    }
+    @Test
+    public void givenCustomerIdAndPackageIdSubscriptPackageReturnErrorResponseWhenSubscriptDone() {
+        PackageReadingController packageReadingControllerTemp = new PackageReadingController(new PackageReadingService(new PackageReadingDao() {
+            @Override
+            public PackageInfo getPackageByCustomerID(String customerID) {
+                return packageInfoList.get(0);
+            }
+
+            @Override
+            public List<PackageInfo> listPackages() {
+                return packageInfoList;
+            }
+        }));
+        assertThat(packageReadingControllerTemp.subscriptPackage(CUSTOMER_ID,packageInfoList.get(0).getPackageId()).getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

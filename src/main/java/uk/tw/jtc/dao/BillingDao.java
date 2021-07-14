@@ -7,4 +7,9 @@ import uk.tw.jtc.model.Billing;
 public interface BillingDao {
     void createNewBill(Billing billing);
     void updateBill(Billing billing);
+    Billing getBillByCustomerId(String customerId);
+    void updatePhoneUsed(String billingId,int phoneUsed);
+    void updateSMSUsed(String billingId,int smsUsed);
+    void updatePhonePay(String billingId,int phonePay);
+    void updateSMSPay(String billingId,int smsPay);
 }

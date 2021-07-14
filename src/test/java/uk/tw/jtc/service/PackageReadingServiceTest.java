@@ -6,39 +6,39 @@ import uk.tw.jtc.dao.PackageReadingDao;
 import uk.tw.jtc.model.PackageInfo;
 import uk.tw.jtc.utils.TestUtils;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class PackageReadingServiceTest {
 
-    private static final String CUSTOMER_ID = "10101010";
     private PackageReadingService packageReadingService;
-    List<PackageInfo> packageInfoList;
+
     @BeforeEach
     public void setUp() {
-        packageInfoList =TestUtils.generatePackageInfoList();
-
+        this.packageReadingService = TestUtils.generatePackageReadingService();
+    }
+    @Test
+    public void givenCustomerIdShouldReturnPackage() {
         PackageReadingDao packageReadingDao = new PackageReadingDao() {
             @Override
             public PackageInfo getPackageByCustomerID(String customerID) {
-                return packageInfoList.get(0);
+                return TestUtils.packageInfoList.get(0);
             }
 
             @Override
             public List<PackageInfo> listPackages() {
-                return packageInfoList;
+                return TestUtils.packageInfoList;
+            }
+
+            @Override
+            public PackageInfo getPackageById(String packageId) {
+                return TestUtils.packageInfoList.stream().filter(e -> e.getPackageId().equals(packageId)).findFirst().get();
             }
         };
-        this.packageReadingService = new PackageReadingService(packageReadingDao);
-    }
-    @Test
-    public void givenCustomerIdShouldReturnPackage() {
-        assertThat(packageReadingService.getPackageByCustomerID(CUSTOMER_ID)).isEqualTo(packageInfoList.get(0));
+        assertThat(new PackageReadingService(packageReadingDao).getPackageByCustomerID(TestUtils.CUSTOMER_ID)).isEqualTo(TestUtils.packageInfoList.get(0));
     }
     @Test
     public void listPackagesShouldReturnPackageList() {
-        assertThat(packageReadingService.listPackages()).isEqualTo(packageInfoList);
+        assertThat(packageReadingService.listPackages()).isEqualTo(TestUtils.packageInfoList);
     }
 }

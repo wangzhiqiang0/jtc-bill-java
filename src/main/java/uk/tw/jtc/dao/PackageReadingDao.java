@@ -11,4 +11,6 @@ public interface PackageReadingDao {
     PackageInfo getPackageByCustomerID(String customerID);
 
     List<PackageInfo> listPackages();
+
+    PackageInfo getPackageById(String packageId);
 }

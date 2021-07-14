@@ -19,10 +19,13 @@ public class PackageReadingService {
         return packageReadingDao.getPackageByCustomerID(customerID);
     }
 
+    public PackageInfo getPackageById(String packageId){
+        return packageReadingDao.getPackageById(packageId);
+    }
+
     public List<PackageInfo> listPackages() {
         return packageReadingDao.listPackages();
     }
 
-    public void subscriptPackage(String customerId, String packageId) {
-    }
+
 }

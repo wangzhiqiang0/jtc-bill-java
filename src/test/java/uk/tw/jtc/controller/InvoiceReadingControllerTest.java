@@ -2,9 +2,12 @@ package uk.tw.jtc.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import uk.tw.jtc.dao.InvoiceDao;
 import uk.tw.jtc.enums.PayEnum;
 import uk.tw.jtc.model.Invoice;
 import uk.tw.jtc.service.BillingService;
+import uk.tw.jtc.service.InvoiceService;
 import uk.tw.jtc.service.PackageReadingService;
 import uk.tw.jtc.utils.TestUtils;
 
@@ -28,5 +31,28 @@ public class InvoiceReadingControllerTest {
         invoice.setStatus(PayEnum.ACTIVE.getStatus());
         invoice.setLastUpdateTime(LocalDate.now());
         assertThat(invoiceReadingController.getActiveInvoice(TestUtils.CUSTOMER_ID).getBody()).isEqualTo(invoice);
+    }
+
+    @Test
+    public void givenCustomerIdGetActiveInvoiceShouldReturnErrorResponse() {
+        InvoiceService invoiceService= new InvoiceService(new InvoiceDao() {
+            @Override
+            public void createInvoice(Invoice invoice) {
+
+            }
+
+            @Override
+            public void updateInvoice(Invoice invoice) {
+
+            }
+
+            @Override
+            public Invoice getActiveInvoice(String customerId) {
+                return null;
+            }
+        });
+        InvoiceReadingController temp = new InvoiceReadingController(invoiceService);
+
+        assertThat(temp.getActiveInvoice(TestUtils.CUSTOMER_ID).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 }

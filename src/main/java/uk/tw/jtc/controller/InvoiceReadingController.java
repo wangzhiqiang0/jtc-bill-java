@@ -1,5 +1,6 @@
 package uk.tw.jtc.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,9 @@ public class InvoiceReadingController {
     @GetMapping("/activeInvoice")
     public ResponseEntity getActiveInvoice(String customerId) {
         Invoice invoice = invoiceService.getActiveInvoice(customerId);
+        if(null == invoice){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
         return ResponseEntity.ok(invoice);
     }
 }

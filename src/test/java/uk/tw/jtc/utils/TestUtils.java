@@ -44,10 +44,28 @@ public class TestUtils {
        return new BillingService(generatePackageReadingService(),generateInvoiceService(),
                generateCustomerMapperPackageService(),generateBillingDao());
     }
+    public static BillingService generateBillingService(BillingDao billingDao) {
+
+
+        return new BillingService(generatePackageReadingService(),generateInvoiceService(),
+                generateCustomerMapperPackageService(),billingDao);
+    }
+
+    public static BillingService generateBillingService(InvoiceDao invoiceDao ,BillingDao billingDao) {
+
+
+        return new BillingService(generatePackageReadingService(),generateInvoiceService(invoiceDao),
+                generateCustomerMapperPackageService(),billingDao);
+    }
     public static InvoiceService generateInvoiceService() {
 
 
         return new InvoiceService(generateInvoiceDao());
+    }
+    public static InvoiceService generateInvoiceService( InvoiceDao invoiceDao) {
+
+
+        return new InvoiceService( invoiceDao);
     }
 
     public static CustomerMapperPackageService generateCustomerMapperPackageService() {
@@ -118,6 +136,11 @@ public class TestUtils {
             @Override
             public void updateSMSPay(String billingId, int smsPay) {
 
+            }
+
+            @Override
+            public List<Billing> getBillingList() {
+                return null;
             }
 
             @Override

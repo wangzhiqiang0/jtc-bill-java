@@ -16,6 +16,10 @@ public class InvoiceService {
         invoiceDao.createInvoice(invoice);
     }
 
+    public void updateInvoice(Invoice invoice) {
+        invoiceDao.updateInvoice(invoice);
+    }
+
     public Invoice getActiveInvoice(String customerId) {
         return invoiceDao.getActiveInvoice(customerId);
     }

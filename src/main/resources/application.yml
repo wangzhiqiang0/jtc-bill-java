@@ -1,0 +1,28 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    #PostgreSQL配置
+    url: jdbc:postgresql://127.0.0.1:5432/postgres
+    username: postgres
+    password: mima
+    driver-class-name: org.postgresql.Driver
+    initialSize: 5
+    minIdle: 5
+    # 最大连接池数量
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+
+    filters: stat,wall
+    maxPoolPreparedStatementPerConnectionSize: 20
+    useGlobalDataSourceStat: true
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+mybatis:
+  mapper-locations: classpath:mapper/*.xml

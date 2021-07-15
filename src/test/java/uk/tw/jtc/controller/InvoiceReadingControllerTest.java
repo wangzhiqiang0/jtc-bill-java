@@ -11,6 +11,7 @@ import uk.tw.jtc.service.InvoiceService;
 import uk.tw.jtc.service.PackageReadingService;
 import uk.tw.jtc.utils.TestUtils;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -54,5 +55,23 @@ public class InvoiceReadingControllerTest {
         InvoiceReadingController temp = new InvoiceReadingController(invoiceService);
 
         assertThat(temp.getActiveInvoice(TestUtils.CUSTOMER_ID).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void paidInvoiceShouldReturn() {
+        Invoice invoice = new Invoice(UUID.randomUUID().toString(),TestUtils.CUSTOMER_ID);
+        invoice.setPay(TestUtils.packageInfoList.get(0).getSubscriptionFee());
+        invoice.setStatus(PayEnum.ACTIVE.getStatus());
+        invoice.setLastUpdateTime(LocalDate.now());
+        assertThat(invoiceReadingController.paidInvoice(TestUtils.CUSTOMER_ID,invoice).getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+    }
+
+    @Test
+    public void paidInvoiceShouldReturnErrorResponse() {
+        Invoice invoice = new Invoice(UUID.randomUUID().toString(),TestUtils.CUSTOMER_ID);
+        invoice.setPay(new BigDecimal(20));
+        invoice.setStatus(PayEnum.ACTIVE.getStatus());
+        invoice.setLastUpdateTime(LocalDate.now());
+        assertThat(invoiceReadingController.paidInvoice(TestUtils.CUSTOMER_ID,invoice).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 }

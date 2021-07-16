@@ -1,7 +1,11 @@
 package uk.tw.jtc.model;
 
-import java.time.LocalDate;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.time.LocalDate;
+@Setter
+@Getter
 public class CustomerMapperPackage {
     private String customerMapperPackageId;
     private String packageId;
@@ -15,35 +19,5 @@ public class CustomerMapperPackage {
         this.subscriptTime = subscriptTime;
     }
 
-    public String getCustomerMapperPackageId() {
-        return customerMapperPackageId;
-    }
 
-    public void setCustomerMapperPackageId(String customerMapperPackageId) {
-        this.customerMapperPackageId = customerMapperPackageId;
-    }
-
-    public String getPackageId() {
-        return packageId;
-    }
-
-    public void setPackageId(String packageId) {
-        this.packageId = packageId;
-    }
-
-    public String getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
-    }
-
-    public LocalDate getSubscriptTime() {
-        return subscriptTime;
-    }
-
-    public void setSubscriptTime(LocalDate subscriptTime) {
-        this.subscriptTime = subscriptTime;
-    }
 }

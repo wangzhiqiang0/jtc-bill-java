@@ -3,9 +3,9 @@ server:
 spring:
   datasource:
     #PostgreSQL配置
-    url: jdbc:postgresql://127.0.0.1:5432/postgres
+    url: jdbc:postgresql://127.0.0.1:5432/billdata
     username: postgres
-    password: mima
+    password: 123456
     driver-class-name: org.postgresql.Driver
     initialSize: 5
     minIdle: 5
@@ -26,3 +26,7 @@ spring:
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
 mybatis:
   mapper-locations: classpath:mapper/*.xml
+
+
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

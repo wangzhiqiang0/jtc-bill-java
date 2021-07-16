@@ -20,9 +20,9 @@ public class BillingReadingController {
         this.packageReadingService = packageReadingService;
     }
 
-    @GetMapping("/subscriptPackage/{packageId}")
+    @PostMapping("/subscriptPackage/{packageId}")
     public ResponseEntity subscriptPackage(@RequestHeader("customerId") String customerId,@PathVariable String packageId){
-        if (null != packageReadingService.getPackageByCustomerID(customerId)) {
+        if (null != billingService.getBillByComerId(customerId)) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
         billingService.subscriptPackage(customerId,packageId);
@@ -33,6 +33,7 @@ public class BillingReadingController {
         CurrentBillingAllowance currentBillingAllowance = billingService.currentBillingPeriod(customerId);
         return ResponseEntity.ok(currentBillingAllowance);
     }
+
 
     @GetMapping("/usedPhone/{minute}")
     public ResponseEntity usedPhone(@RequestHeader("customerId") String customerId,@PathVariable Integer minute){

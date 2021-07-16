@@ -15,10 +15,6 @@ public class PackageReadingService {
         this.packageReadingDao = packageReadingDao;
     }
 
-    public PackageInfo getPackageByCustomerID(String customerID){
-        return packageReadingDao.getPackageByCustomerID(customerID);
-    }
-
     public PackageInfo getPackageById(String packageId){
         return packageReadingDao.getPackageById(packageId);
     }

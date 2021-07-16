@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="uk.tw.jtc.dao.PackageReadingDao">
+
+    <resultMap id="packageInfo" type="uk.tw.jtc.model.PackageInfo">
+        <result property="packageId" jdbcType="VARCHAR" column="package_id" />
+        <result property="name" jdbcType="VARCHAR" column="name" />
+        <result property="phoneLimit" jdbcType="INTEGER" column="phone_limit" />
+        <result property="smsLimit" jdbcType="INTEGER" column="sms_limit" />
+        <result property="extraPhoneFee" jdbcType="DECIMAL" column="extra_phone_fee" />
+        <result property="extraSMSFee" jdbcType="DECIMAL" column="extra_sms_fee" />
+        <result property="subscriptionFee" jdbcType="DECIMAL" column="subscription_fee" />
+
+    </resultMap>
+
+
+
+    <select id="listPackages" resultMap="packageInfo" >
+        select * from jtc_package
+    </select>
+
+    <select id="getPackageById" resultMap="packageInfo" >
+        select * from jtc_package where package_id = #{packageId}
+    </select>
+
+
+
+</mapper>

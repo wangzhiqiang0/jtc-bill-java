@@ -41,21 +41,18 @@ public class TestUtils {
     public static BillingService generateBillingService() {
 
 
-       return new BillingService(generatePackageReadingService(),generateInvoiceService(),
-               generateCustomerMapperPackageService(),generateBillingDao());
+       return new BillingService(generatePackageReadingService(),generateInvoiceService(),generateBillingDao());
     }
     public static BillingService generateBillingService(BillingDao billingDao) {
 
 
-        return new BillingService(generatePackageReadingService(),generateInvoiceService(),
-                generateCustomerMapperPackageService(),billingDao);
+        return new BillingService(generatePackageReadingService(),generateInvoiceService(),billingDao);
     }
 
     public static BillingService generateBillingService(InvoiceDao invoiceDao ,BillingDao billingDao) {
 
 
-        return new BillingService(generatePackageReadingService(),generateInvoiceService(invoiceDao),
-                generateCustomerMapperPackageService(),billingDao);
+        return new BillingService(generatePackageReadingService(),generateInvoiceService(invoiceDao),billingDao);
     }
     public static InvoiceService generateInvoiceService() {
 
@@ -91,17 +88,23 @@ public class TestUtils {
             }
 
             @Override
-            public void updateInvoice(Invoice invoice) {
+            public void updateInvoice(String invoiceId, String status) {
 
             }
 
+//            @Override
+//            public Invoice getActiveInvoice(String customerId) {
+//                Invoice invoice = new Invoice(UUID.randomUUID().toString(),TestUtils.CUSTOMER_ID);
+//                invoice.setPay(TestUtils.packageInfoList.get(0).getSubscriptionFee());
+//                invoice.setStatus(PayEnum.ACTIVE.getStatus());
+//                invoice.setLastUpdateTime(LocalDate.now());
+//                return invoice;
+//            }
+
+
             @Override
-            public Invoice getActiveInvoice(String customerId) {
-                Invoice invoice = new Invoice(UUID.randomUUID().toString(),TestUtils.CUSTOMER_ID);
-                invoice.setPay(TestUtils.packageInfoList.get(0).getSubscriptionFee());
-                invoice.setStatus(PayEnum.ACTIVE.getStatus());
-                invoice.setLastUpdateTime(LocalDate.now());
-                return invoice;
+            public List<Invoice> getActiveInvoice(String customerId) {
+                return null;
             }
         };
     }
@@ -145,10 +148,7 @@ public class TestUtils {
 
             @Override
             public Billing getBillByCustomerId(String customerId) {
-                Billing billing = new Billing(UUID.randomUUID().toString(),customerId,packageInfoList.get(0).getPackageId());
-                billing.setSmsUsed(5);
-                billing.setPhoneUsed(5);
-                return billing;
+              return null;
             }
         };
         return billingDao;
@@ -156,10 +156,7 @@ public class TestUtils {
 
     public static PackageReadingService generatePackageReadingService() {
         PackageReadingDao packageReadingDao = new PackageReadingDao() {
-            @Override
-            public PackageInfo getPackageByCustomerID(String customerID) {
-                return null;
-            }
+
 
             @Override
             public List<PackageInfo> listPackages() {

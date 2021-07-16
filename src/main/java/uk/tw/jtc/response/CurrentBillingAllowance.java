@@ -1,26 +1,14 @@
 package uk.tw.jtc.response;
 
-import java.util.Objects;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.Objects;
+@Setter
+@Getter
 public class CurrentBillingAllowance {
     private int smsAllowance;
     private int phoneAllowance;
-
-    public int getSmsAllowance() {
-        return smsAllowance;
-    }
-
-    public void setSmsAllowance(int smsAllowance) {
-        this.smsAllowance = smsAllowance;
-    }
-
-    public int getPhoneAllowance() {
-        return phoneAllowance;
-    }
-
-    public void setPhoneAllowance(int phoneAllowance) {
-        this.phoneAllowance = phoneAllowance;
-    }
 
     @Override
     public boolean equals(Object o) {

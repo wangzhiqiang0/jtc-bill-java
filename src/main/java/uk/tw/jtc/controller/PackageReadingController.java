@@ -17,15 +17,6 @@ public class PackageReadingController {
         this.packageReadingService = packageReadingService;
     }
 
-    @GetMapping("/subscriptionPackage")
-    public ResponseEntity getSubscriptionPackage(@RequestHeader("customerId") String customerId){
-        PackageInfo packageInfo = packageReadingService.getPackageByCustomerID(customerId);
-        if (packageInfo ==null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.ok(packageInfo);
-    }
-
     @GetMapping("/listPackages")
     public ResponseEntity listPackages(){
         List<PackageInfo> packageInfoList = packageReadingService.listPackages();

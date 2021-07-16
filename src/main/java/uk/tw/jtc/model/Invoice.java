@@ -1,9 +1,13 @@
 package uk.tw.jtc.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
-
+@Setter
+@Getter
 public class Invoice {
     private String invoiceId;
     private String customerId;
@@ -16,45 +20,6 @@ public class Invoice {
         this.customerId = customerId;
     }
 
-    public String getInvoiceId() {
-        return invoiceId;
-    }
-
-    public void setInvoiceId(String invoiceId) {
-        this.invoiceId = invoiceId;
-    }
-
-    public String getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
-    }
-
-    public BigDecimal getPay() {
-        return pay;
-    }
-
-    public void setPay(BigDecimal pay) {
-        this.pay = pay;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public LocalDate getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-
-    public void setLastUpdateTime(LocalDate lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
-    }
 
     @Override
     public boolean equals(Object o) {

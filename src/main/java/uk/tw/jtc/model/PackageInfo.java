@@ -1,7 +1,11 @@
 package uk.tw.jtc.model;
 
-import java.math.BigDecimal;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.math.BigDecimal;
+@Setter
+@Getter
 public class PackageInfo {
     private String packageId;
     private String name;
@@ -24,59 +28,5 @@ public class PackageInfo {
 
 
 
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getSubscriptionFee() {
-        return subscriptionFee;
-    }
-
-    public void setSubscriptionFee(BigDecimal subscriptionFee) {
-        this.subscriptionFee = subscriptionFee;
-    }
-
-    public int getPhoneLimit() {
-        return phoneLimit;
-    }
-
-    public void setPhoneLimit(int phoneLimit) {
-        this.phoneLimit = phoneLimit;
-    }
-
-    public int getSmsLimit() {
-        return smsLimit;
-    }
-
-    public void setSmsLimit(int smsLimit) {
-        this.smsLimit = smsLimit;
-    }
-
-    public BigDecimal getExtraPhoneFee() {
-        return extraPhoneFee;
-    }
-
-    public void setExtraPhoneFee(BigDecimal extraPhoneFee) {
-        this.extraPhoneFee = extraPhoneFee;
-    }
-
-    public BigDecimal getExtraSMSFee() {
-        return extraSMSFee;
-    }
-
-    public void setExtraSMSFee(BigDecimal extraSMSFee) {
-        this.extraSMSFee = extraSMSFee;
-    }
-
-    public String getPackageId() {
-        return packageId;
-    }
-
-    public void setPackageId(String packageId) {
-        this.packageId = packageId;
-    }
 }

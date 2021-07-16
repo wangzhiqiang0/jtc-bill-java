@@ -36,23 +36,23 @@ public class InvoiceReadingControllerTest {
 
     @Test
     public void givenCustomerIdGetActiveInvoiceShouldReturnErrorResponse() {
-        InvoiceService invoiceService= new InvoiceService(new InvoiceDao() {
-            @Override
-            public void createInvoice(Invoice invoice) {
-
-            }
-
-            @Override
-            public void updateInvoice(Invoice invoice) {
-
-            }
-
-            @Override
-            public Invoice getActiveInvoice(String customerId) {
-                return null;
-            }
-        });
-        InvoiceReadingController temp = new InvoiceReadingController(invoiceService);
+//        InvoiceService invoiceService= new InvoiceService(new InvoiceDao() {
+//            @Override
+//            public void createInvoice(Invoice invoice) {
+//
+//            }
+//
+//            @Override
+//            public void updateInvoice(Invoice invoice) {
+//
+//            }
+//
+//            @Override
+//            public Invoice getActiveInvoice(String customerId) {
+//                return null;
+//            }
+//        });
+        InvoiceReadingController temp = new InvoiceReadingController(null);
 
         assertThat(temp.getActiveInvoice(TestUtils.CUSTOMER_ID).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }

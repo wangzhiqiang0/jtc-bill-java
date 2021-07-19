@@ -3,18 +3,18 @@ package uk.tw.jtc.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import uk.tw.jtc.dao.PackageReadingDao;
 import uk.tw.jtc.mock.BillingDaoImpl;
 import uk.tw.jtc.mock.InvoiceDaoImpl;
 import uk.tw.jtc.mock.PackageReadingDaoImpl;
 import uk.tw.jtc.model.Billing;
-import uk.tw.jtc.model.PackageInfo;
+import uk.tw.jtc.request.Used;
 import uk.tw.jtc.response.CurrentBillingAllowance;
 import uk.tw.jtc.service.BillingService;
 import uk.tw.jtc.service.InvoiceService;
 import uk.tw.jtc.service.PackageReadingService;
 import uk.tw.jtc.utils.TestUtils;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -74,14 +74,42 @@ public class BillingReadingControllerTest {
     }
 
     @Test
+    public void execute() {
+        assertThat(billingReadingController.execute().getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+    }
+
+
+
+    @Test
     public void givenCustomerIdAndPhoneUsedPhone() {
-        assertThat(billingReadingController.usedPhone(TestUtils.CUSTOMER_ID, 1).getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+        List<Billing> billingList = new ArrayList<>();
+        Billing billing = new Billing(UUID.randomUUID().toString(),TestUtils.CUSTOMER_ID,TestUtils.packageInfoList.get(0));
+        billing.setSmsUsed(1);
+        billing.setPhoneUsed(1);
+        billing.setFirst(true);
+        billing.setSubscriptTime(LocalDate.now());
+        billingList.add(billing);
+        billingDao.setBillingList(billingList);
+
+        Used pay = new Used();
+        pay.setPhoneUsed(1);
+        assertThat(billingReadingController.usedPhone(TestUtils.CUSTOMER_ID, pay).getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
     }
 
     @Test
     public void givenCustomerIdAndSMSUsedSMS() {
+        List<Billing> billingList = new ArrayList<>();
+        Billing billing = new Billing(UUID.randomUUID().toString(),TestUtils.CUSTOMER_ID,TestUtils.packageInfoList.get(0));
+        billing.setSmsUsed(1);
+        billing.setPhoneUsed(1);
+        billing.setFirst(true);
+        billing.setSubscriptTime(LocalDate.now());
+        billingList.add(billing);
+        billingDao.setBillingList(billingList);
 
-        assertThat(billingReadingController.usedSMS(TestUtils.CUSTOMER_ID, 1).getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+        Used pay = new Used();
+        pay.setSmsUsed(1);
+        assertThat(billingReadingController.usedSMS(TestUtils.CUSTOMER_ID, pay).getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
     }
 
 

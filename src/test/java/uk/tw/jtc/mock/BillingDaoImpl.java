@@ -20,12 +20,6 @@ public class BillingDaoImpl implements BillingDao {
     }
 
     @Override
-    public void updateBill(Billing billing) {
-        billingList = billingList.stream().filter(e -> !e.getBillingId().equals(billing.getBillingId())).collect(Collectors.toList());
-        billingList.add(billing);
-    }
-
-    @Override
     public Billing getBillByCustomerId(String customerId) {
         Optional<Billing> billing = billingList.stream().filter(e -> e.getCustomerId().equals(customerId)).findFirst();
         if(!billing.isPresent()){
@@ -61,5 +55,11 @@ public class BillingDaoImpl implements BillingDao {
     @Override
     public List<Billing> getBillingList() {
         return billingList;
+    }
+
+    @Override
+    public void updateFistToFalse(String billingId) {
+        Billing billing = billingList.stream().filter( e -> e.getBillingId().equals(billingId)).findFirst().get();
+        billing.setFirst(false);
     }
 }

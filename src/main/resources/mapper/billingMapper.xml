@@ -22,9 +22,36 @@
 
     <insert id="createNewBill" parameterType="uk.tw.jtc.model.Billing">
         insert into
-        jtc_bill(billing_id,customer_id,package_id,first,subscript_time)
+        jtc_bill(billing_id,customer_id,package_id,first,subscript_time,last_update_time)
         values
-        (#{billing.billingId},#{billing.customerId},#{billing.packageInfo.packageId},true,now());
+        (#{billing.billingId},#{billing.customerId},#{billing.packageInfo.packageId},true,now(),now());
     </insert>
+
+    <select id="getBillingList" resultMap="billing">
+        select * from jtc_bill
+    </select>
+
+
+    <update id="updateFistToFalse"  >
+        update  jtc_bill set first = false ,last_update_time = now() where billing_id = #{billingId}
+    </update>
+
+    <update id="updatePhoneUsed" >
+        update  jtc_bill set phone_used = #{phoneUsed} ,last_update_time = now() where billing_id = #{billingId}
+    </update>
+
+    <update id="updateSMSUsed" >
+        update  jtc_bill set sms_used = #{smsUsed} ,last_update_time = now() where billing_id = #{billingId}
+    </update>
+
+    <update id="updatePhonePay" >
+        update  jtc_bill set phone_pay = #{phonePay} ,last_update_time = now() where billing_id = #{billingId}
+    </update>
+
+    <update id="updateSMSPay" >
+        update  jtc_bill set sms_pay = #{smsPay} ,last_update_time = now() where billing_id = #{billingId}
+    </update>
+
+
 
 </mapper>

@@ -14,7 +14,7 @@ public class InvoiceService {
         this.invoiceDao = invoiceDao;
     }
 
-    public void createInvoice(Invoice invoice) {
+    public void createInvoice(List<Invoice> invoice) {
         invoiceDao.createInvoice(invoice);
     }
 

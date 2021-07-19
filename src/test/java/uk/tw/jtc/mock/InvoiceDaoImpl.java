@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 public class InvoiceDaoImpl implements InvoiceDao {
     private List<Invoice> invoicesList;
     @Override
-    public void createInvoice(Invoice invoice) {
-        invoicesList.add(invoice);
+    public void createInvoice(List<Invoice> invoice) {
+        invoicesList.addAll(invoice);
     }
 
     @Override

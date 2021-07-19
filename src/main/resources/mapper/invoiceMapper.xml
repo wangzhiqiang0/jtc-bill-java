@@ -1,0 +1,42 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="uk.tw.jtc.dao.InvoiceDao">
+
+    <resultMap id="invoice" type="uk.tw.jtc.model.Invoice">
+
+        <result property="invoiceId" jdbcType="VARCHAR" column="invoice_id" />
+        <result property="customerId" jdbcType="VARCHAR" column="customer_id" />
+        <result property="pay" jdbcType="DECIMAL" column="pay" />
+        <result property="status" jdbcType="DECIMAL" column="status" />
+        <result property="createTime" jdbcType="DECIMAL" column="create_time" />
+        <result property="lastUpdateTime" jdbcType="DECIMAL" column="last_update_time" />
+
+    </resultMap>
+
+    <insert id="createInvoice">
+        insert into jtc_invoice (invoice_id, customer_id,pay,status,create_time,last_update_time)
+        values
+        <foreach collection="invoices" item="invoice" separator=",">
+            (
+            #{invoice.invoiceId},
+            #{invoice.customerId},
+            #{invoice.pay},
+            #{invoice.status},
+            #{invoice.createTime},
+            #{invoice.lastUpdateTime}
+            )
+        </foreach>
+    </insert>
+
+    <select id="getActiveInvoice" resultMap="invoice">
+        select * from jtc_invoice where customer_id = #{customerId} and status = 'active'
+    </select>
+
+    <update id="updateInvoice" >
+        update  jtc_invoice set status = #{status} ,last_update_time = now() where invoice_id = #{invoiceId}
+    </update>
+
+
+
+
+</mapper>
+

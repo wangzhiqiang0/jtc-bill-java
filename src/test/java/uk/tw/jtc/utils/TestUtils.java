@@ -83,7 +83,7 @@ public class TestUtils {
     private static InvoiceDao generateInvoiceDao() {
         return new InvoiceDao() {
             @Override
-            public void createInvoice(Invoice invoice) {
+            public void createInvoice(List<Invoice> invoice) {
 
             }
 
@@ -117,7 +117,7 @@ public class TestUtils {
             }
 
             @Override
-            public void updateBill(Billing billing) {
+            public void updateFistToFalse(String billingId) {
 
             }
 

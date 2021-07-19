@@ -13,6 +13,7 @@ public class Invoice {
     private String customerId;
     private BigDecimal pay;
     private String status;
+    private LocalDate createTime;
     private LocalDate lastUpdateTime;
 
     public Invoice(String invoiceId, String customerId) {
@@ -20,6 +21,8 @@ public class Invoice {
         this.customerId = customerId;
     }
 
+    public Invoice() {
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.tw.jtc.enums.PayEnum;
+import uk.tw.jtc.model.Billing;
 import uk.tw.jtc.model.Invoice;
 import uk.tw.jtc.request.RequestInvoice;
 import uk.tw.jtc.service.InvoiceService;
@@ -19,6 +20,8 @@ public class InvoiceReadingController {
     public InvoiceReadingController(InvoiceService invoiceService) {
         this.invoiceService = invoiceService;
     }
+
+
 
     @GetMapping("/active")
     public ResponseEntity getActiveInvoice(@RequestHeader("customerId") String customerId) {

@@ -21,8 +21,8 @@
             #{invoice.customerId},
             #{invoice.pay},
             #{invoice.status},
-            #{invoice.createTime},
-            #{invoice.lastUpdateTime}
+            now(),
+            now()
             )
         </foreach>
     </insert>

@@ -6,6 +6,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Used {
+
     private int phoneUsed;
     private int smsUsed;
 }

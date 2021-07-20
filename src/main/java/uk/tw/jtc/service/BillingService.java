@@ -47,13 +47,13 @@ public class BillingService {
     public CurrentBillingAllowance currentBillingPeriod(String customerId) {
         Billing billing = billingDao.getBillByCustomerId(customerId);
         CurrentBillingAllowance currentBillingAllowance = new CurrentBillingAllowance();
-        int needToPayPhone = billing.getPhoneUsed()-billing.getPhonePay();
-        if(needToPayPhone<billing.getPackageInfo().getPhoneLimit()){
-            currentBillingAllowance.setPhoneAllowance(billing.getPackageInfo().getPhoneLimit()-needToPayPhone);
+        int phoneExtra = billing.getPhoneUsed()-billing.getPhonePay()-billing.getPackageInfo().getPhoneLimit();
+        if(phoneExtra < 0){
+            currentBillingAllowance.setPhoneAllowance(-phoneExtra);
         }
-        int needToPaySms = billing.getSmsUsed() - billing.getSmsPay();
-        if(needToPaySms < billing.getPackageInfo().getSmsLimit()){
-            currentBillingAllowance.setSmsAllowance(billing.getPackageInfo().getSmsLimit()-needToPaySms);
+        int smsExtra = billing.getSmsUsed() - billing.getSmsPay()-billing.getPackageInfo().getSmsLimit();
+        if(smsExtra < 0){
+            currentBillingAllowance.setSmsAllowance(-smsExtra);
         }
         return currentBillingAllowance;
     }
@@ -61,25 +61,20 @@ public class BillingService {
     @Transactional
     public List<Invoice> generateBill() {
         List<Invoice> invoiceList = new ArrayList<>();
-        List<Billing> allBillingList = billingDao.getBillingList();
-
-        List<Billing> newSubBillingList = allBillingList.stream().filter(e -> e.isFirst()).
-                collect(Collectors.toList());
-        List<Billing> needToPayBillingList = allBillingList.stream().filter(e -> !e.isFirst() &&
-                e.getSubscriptTime().getDayOfMonth() == LocalDate.now().getDayOfMonth()).collect(Collectors.toList());
-        newSubBillingList.forEach(e->{
-            billingDao.updateFistToFalse(e.getBillingId());
-            invoiceList.add(generateInvoice(getNewSubFunction(),e));
-        });
-
-        needToPayBillingList.forEach(e->{
-            invoiceList.add(generateInvoice(getNoFirstFunction(),e));
+        List<Billing> billingListList = billingDao.getBillingList();
+        billingListList.forEach(e -> {
+            if(e.isFirst()){
+                billingDao.updateFistToFalse(e.getBillingId());
+                invoiceList.add(invoiceService.generateInvoice(getNewSubFunction(),e));
+            }else if(e.getSubscriptTime().getDayOfMonth() == LocalDate.now().getDayOfMonth()){
+                invoiceList.add(invoiceService.generateInvoice(getNoFirstFunction(),e));
+                billingDao.updateSMSPay(e.getBillingId(),e.getSmsUsed());
+                billingDao.updatePhonePay(e.getBillingId(),e.getPhoneUsed());
+            }
         });
         if(invoiceList.size() !=0){
             invoiceService.createInvoice(invoiceList);
         }
-
-
         return invoiceList;
 
     }
@@ -87,52 +82,29 @@ public class BillingService {
     private Function<Billing, BigDecimal> getNoFirstFunction() {
         Function<Billing,BigDecimal> noFirstFunction = x -> {
             BigDecimal result = x.getPackageInfo().getSubscriptionFee();
-            int needToPayPhone = x.getPhoneUsed()-x.getPhonePay();
-            if(needToPayPhone > x.getPackageInfo().getPhoneLimit()){
-                result =  result.add(x.getPackageInfo().getExtraPhoneFee().multiply(new BigDecimal(needToPayPhone -x.getPackageInfo().getPhoneLimit() )));
-            }
-            billingDao.updatePhonePay(x.getBillingId(),x.getPhoneUsed());
-            int needToPaySms = x.getSmsUsed() - x.getSmsPay();
-            if(needToPaySms > x.getPackageInfo().getSmsLimit()){
-                result =  result.add(x.getPackageInfo().getExtraSMSFee().multiply(new BigDecimal(needToPaySms -x.getPackageInfo().getSmsLimit() )));
-            }
-            billingDao.updateSMSPay(x.getBillingId(),x.getSmsUsed());
-
-            return result;
+            return result.add(getExtraPhoneFee(x)).add(getExtraSMSFee(x));
         };
         return noFirstFunction;
     }
 
-    private Function<Billing, BigDecimal> getNoFirstFunction(boolean flag) {
-        Function<Billing,BigDecimal> noFirstFunction = x -> {
-            BigDecimal result = x.getPackageInfo().getSubscriptionFee();
-            int needToPayPhone = x.getPhoneUsed()-x.getPhonePay();
-            if(needToPayPhone > x.getPackageInfo().getPhoneLimit()){
-                result =  result.add(x.getPackageInfo().getExtraPhoneFee().multiply(new BigDecimal(needToPayPhone -x.getPackageInfo().getPhoneLimit() )));
-            }
-
-            int needToPaySms = x.getSmsUsed() - x.getSmsPay();
-            if(needToPaySms > x.getPackageInfo().getSmsLimit()){
-                result =  result.add(x.getPackageInfo().getExtraSMSFee().multiply(new BigDecimal(needToPaySms -x.getPackageInfo().getSmsLimit() )));
-            }
-            return result;
-        };
-        return noFirstFunction;
+    private BigDecimal getExtraPhoneFee(Billing billing){
+        int extra = billing.getPhoneUsed()-billing.getPhonePay()-billing.getPackageInfo().getPhoneLimit();
+        return extra>0 ? billing.getPackageInfo().getExtraPhoneFee().multiply(new BigDecimal(extra ))
+                :new BigDecimal(0);
     }
+
+    private BigDecimal getExtraSMSFee(Billing billing){
+        int extra = billing.getSmsUsed() - billing.getSmsPay()-billing.getPackageInfo().getSmsLimit();
+        return extra>0 ? billing.getPackageInfo().getExtraSMSFee().multiply(new BigDecimal(extra ))
+                :new BigDecimal(0);
+    }
+
 
     private Function<Billing, BigDecimal> getNewSubFunction() {
         return x -> x.getPackageInfo().getSubscriptionFee();
     }
 
-    public Invoice generateInvoice(Function<Billing,BigDecimal> function, Billing billing){
-        Invoice invoice = new Invoice(UUID.randomUUID().toString(),billing.getCustomerId());
-        invoice.setPay(function.apply(billing));
-        invoice.setStatus(PayEnum.ACTIVE.getStatus());
-        invoice.setCreateTime(LocalDate.now());
-        invoice.setLastUpdateTime(LocalDate.now());
-        return invoice;
 
-    }
 
     public Billing usedPhone(String customerId,int minute) {
         Billing billing = billingDao.getBillByCustomerId(customerId);
@@ -155,9 +127,8 @@ public class BillingService {
             pay.setPay(getNewSubFunction().apply(billing));
         }else {
 
-            pay.setPay(getNoFirstFunction(false).apply(billing));
+            pay.setPay(getNoFirstFunction().apply(billing));
         }
-
         return pay;
     }
 

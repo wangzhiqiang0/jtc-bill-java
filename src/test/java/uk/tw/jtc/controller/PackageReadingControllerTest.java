@@ -15,7 +15,6 @@ public class PackageReadingControllerTest {
     PackageReadingDaoImpl packageReadingDao = new PackageReadingDaoImpl();
     @BeforeEach
     public void setUp() {
-        packageReadingDao.setPackageInfo(TestUtils.packageInfoList.get(0));
         packageReadingDao.setPackageInfoList(TestUtils.packageInfoList);
         packageReadingController = new PackageReadingController(new PackageReadingService(packageReadingDao));
     }

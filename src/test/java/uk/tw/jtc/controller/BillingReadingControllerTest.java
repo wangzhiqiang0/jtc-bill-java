@@ -35,6 +35,7 @@ public class BillingReadingControllerTest {
         billingDao = new BillingDaoImpl();
         billingDao.setBillingList(new ArrayList<>());
         PackageReadingDaoImpl packageReadingDao = new PackageReadingDaoImpl();
+        packageReadingDao.setPackageInfoList(TestUtils.packageInfoList);
         invoiceDao = new InvoiceDaoImpl();
         PackageReadingService packageReadingService = new PackageReadingService(packageReadingDao);
         InvoiceService invoiceService = new InvoiceService(invoiceDao);

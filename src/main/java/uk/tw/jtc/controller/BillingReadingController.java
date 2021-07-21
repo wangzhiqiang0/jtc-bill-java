@@ -11,6 +11,8 @@ import uk.tw.jtc.response.CurrentBillingAllowance;
 import uk.tw.jtc.service.BillingService;
 import uk.tw.jtc.service.PackageReadingService;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/billing")
@@ -24,7 +26,7 @@ public class BillingReadingController {
     }
 
     @PostMapping("/subscriptPackage/{packageId}")
-    public ResponseEntity subscriptPackage(@RequestHeader("customerId") String customerId,@PathVariable String packageId){
+    public ResponseEntity subscriptPackage(@RequestHeader("customerId") String customerId, @PathVariable String packageId){
         Billing billing = billingService.getBillByComerId(customerId);
         PackageInfo info =  packageReadingService.getPackageById(packageId);
         if (null != billing || null == info) {

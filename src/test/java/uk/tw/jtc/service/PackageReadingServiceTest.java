@@ -14,7 +14,6 @@ public class PackageReadingServiceTest {
     @BeforeEach
     public void setUp() {
 
-        packageReadingDao.setPackageInfo(TestUtils.packageInfoList.get(0));
         packageReadingDao.setPackageInfoList(TestUtils.packageInfoList);
         this.packageReadingService = new PackageReadingService(packageReadingDao);
     }

@@ -10,7 +10,6 @@ import java.util.List;
 @Setter
 @Getter
 public class PackageReadingDaoImpl implements PackageReadingDao {
-    private PackageInfo packageInfo;
     private List<PackageInfo> packageInfoList;
 
 
@@ -21,6 +20,6 @@ public class PackageReadingDaoImpl implements PackageReadingDao {
 
     @Override
     public PackageInfo getPackageById(String packageId) {
-        return packageInfo;
+        return packageInfoList.stream().filter(e->packageId.equals(e.getPackageId())).findFirst().get();
     }
 }

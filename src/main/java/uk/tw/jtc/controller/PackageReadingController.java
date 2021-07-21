@@ -18,7 +18,7 @@ public class PackageReadingController {
     }
 
     @GetMapping("/listPackages")
-    public ResponseEntity listPackages(){
+    public ResponseEntity<List<PackageInfo>> listPackages(){
         List<PackageInfo> packageInfoList = packageReadingService.listPackages();
         if (packageInfoList ==null || packageInfoList.size() ==0) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

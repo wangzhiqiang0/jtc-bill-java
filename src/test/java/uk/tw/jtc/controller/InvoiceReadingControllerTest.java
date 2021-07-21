@@ -55,7 +55,7 @@ public class InvoiceReadingControllerTest {
         RequestInvoice requestInvoice = new RequestInvoice();
         requestInvoice.setInvoiceId(invoice.getInvoiceId());
         requestInvoice.setPay(invoice.getPay());
-        assertThat(invoiceReadingController.paidInvoice(TestUtils.CUSTOMER_ID,requestInvoice).getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+        assertThat(invoiceReadingController.paidInvoice(TestUtils.CUSTOMER_ID,requestInvoice).getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
     @Test

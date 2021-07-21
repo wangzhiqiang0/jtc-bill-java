@@ -49,6 +49,6 @@ public class InvoiceReadingController {
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.noContent().build();
     }
 }

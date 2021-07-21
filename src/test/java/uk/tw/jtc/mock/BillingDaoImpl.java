@@ -40,16 +40,12 @@ public class BillingDaoImpl implements BillingDao {
         billing.setSmsUsed(smsUsed);
     }
 
-    @Override
-    public void updatePhonePay(String billingId, int phonePay) {
-        Billing billing = billingList.stream().filter( e -> e.getBillingId().equals(billingId)).findFirst().get();
-        billing.setPhonePay(phonePay);
-    }
 
     @Override
-    public void updateSMSPay(String billingId, int smsPay) {
+    public void updateBillPay(String billingId, int smsPay, int phonePay) {
         Billing billing = billingList.stream().filter( e -> e.getBillingId().equals(billingId)).findFirst().get();
         billing.setSmsPay(smsPay);
+        billing.setPhonePay(phonePay);
     }
 
     @Override

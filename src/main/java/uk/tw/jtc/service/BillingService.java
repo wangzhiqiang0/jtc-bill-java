@@ -13,13 +13,10 @@ import uk.tw.jtc.response.Pay;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 @Service
 public class BillingService {
@@ -37,15 +34,13 @@ public class BillingService {
     }
 
     @Transactional
-    public Billing subscriptPackage(String customerId, String packageId) {
-        PackageInfo info = packageReadingService.getPackageById(packageId);
+    public Billing subscriptPackage(String customerId, PackageInfo info) {
         Billing billing = new Billing(UUID.randomUUID().toString(),customerId,info);
         billingDao.createNewBill(billing);
         return billing;
     }
 
-    public CurrentBillingAllowance currentBillingPeriod(String customerId) {
-        Billing billing = billingDao.getBillByCustomerId(customerId);
+    public CurrentBillingAllowance currentBillingPeriod( Billing billing) {
         CurrentBillingAllowance currentBillingAllowance = new CurrentBillingAllowance();
         int phoneExtra = billing.getPhoneUsed()-billing.getPhonePay()-billing.getPackageInfo().getPhoneLimit();
         if(phoneExtra < 0){
@@ -64,12 +59,13 @@ public class BillingService {
         List<Billing> billingListList = billingDao.getBillingList();
         billingListList.forEach(e -> {
             if(e.isFirst()){
-                billingDao.updateFistToFalse(e.getBillingId());
                 invoiceList.add(invoiceService.generateInvoice(getNewSubFunction(),e));
+                billingDao.updateFistToFalse(e.getBillingId());
+
             }else if(e.getSubscriptTime().getDayOfMonth() == LocalDate.now().getDayOfMonth()){
                 invoiceList.add(invoiceService.generateInvoice(getNoFirstFunction(),e));
-                billingDao.updateSMSPay(e.getBillingId(),e.getSmsUsed());
-                billingDao.updatePhonePay(e.getBillingId(),e.getPhoneUsed());
+                billingDao.updateBillPay(e.getBillingId(),e.getSmsUsed(),e.getPhoneUsed());
+
             }
         });
         if(invoiceList.size() !=0){
@@ -106,22 +102,19 @@ public class BillingService {
 
 
 
-    public Billing usedPhone(String customerId,int minute) {
-        Billing billing = billingDao.getBillByCustomerId(customerId);
+    public Billing usedPhone(Billing billing,int minute) {
         billingDao.updatePhoneUsed(billing.getBillingId(),billing.getPhoneUsed()+minute);
 
         return billing;
     }
-    public Billing usedSMS(String customerId,int num) {
-        Billing billing = billingDao.getBillByCustomerId(customerId);
+    public Billing usedSMS( Billing billing,int num) {
         billingDao.updateSMSUsed(billing.getBillingId(),billing.getSmsUsed()+num);
         return billing;
     }
 
 
 
-    public Pay getBillAtAnyTime(String customerId){
-        Billing billing = billingDao.getBillByCustomerId(customerId);
+    public Pay getBillAtAnyTime(Billing billing){
         Pay pay = new Pay();
         if(billing.isFirst()){
             pay.setPay(getNewSubFunction().apply(billing));

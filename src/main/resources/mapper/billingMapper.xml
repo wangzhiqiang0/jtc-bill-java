@@ -44,12 +44,8 @@
         update  jtc_bill set sms_used = #{smsUsed} ,last_update_time = now() where billing_id = #{billingId}
     </update>
 
-    <update id="updatePhonePay" >
-        update  jtc_bill set phone_pay = #{phonePay} ,last_update_time = now() where billing_id = #{billingId}
-    </update>
-
-    <update id="updateSMSPay" >
-        update  jtc_bill set sms_pay = #{smsPay} ,last_update_time = now() where billing_id = #{billingId}
+    <update id="updateBillPay" >
+        update  jtc_bill set sms_pay = #{smsPay} ,phone_pay = #{phonePay},last_update_time = now() where billing_id = #{billingId}
     </update>
 
 

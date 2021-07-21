@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import uk.tw.jtc.model.Billing;
+import uk.tw.jtc.model.PackageInfo;
 import uk.tw.jtc.request.Used;
 import uk.tw.jtc.response.CurrentBillingAllowance;
 import uk.tw.jtc.service.BillingService;
@@ -24,18 +25,20 @@ public class BillingReadingController {
 
     @PostMapping("/subscriptPackage/{packageId}")
     public ResponseEntity subscriptPackage(@RequestHeader("customerId") String customerId,@PathVariable String packageId){
-        if (null != billingService.getBillByComerId(customerId)) {
+        Billing billing = billingService.getBillByComerId(customerId);
+        PackageInfo info =  packageReadingService.getPackageById(packageId);
+        if (null != billing || null == info) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        billingService.subscriptPackage(customerId,packageId);
-        return ResponseEntity.accepted().build();
+        billingService.subscriptPackage(customerId,info);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/execute")
     public ResponseEntity execute(){
 
         billingService.generateBill();
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/currentBillingPeriod")
@@ -44,7 +47,7 @@ public class BillingReadingController {
         if(billing == null){
             return ResponseEntity.badRequest().build();
         }
-        CurrentBillingAllowance currentBillingAllowance = billingService.currentBillingPeriod(customerId);
+        CurrentBillingAllowance currentBillingAllowance = billingService.currentBillingPeriod(billing);
         return ResponseEntity.ok(currentBillingAllowance);
     }
 
@@ -55,8 +58,8 @@ public class BillingReadingController {
         if(billing == null || 0==pay.getPhoneUsed()){
             return ResponseEntity.badRequest().build();
         }
-        billingService.usedPhone(customerId,pay.getPhoneUsed());
-        return ResponseEntity.accepted().build();
+        billingService.usedPhone(billing,pay.getPhoneUsed());
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/usedSMS")
@@ -65,8 +68,8 @@ public class BillingReadingController {
         if(billing == null || 0==pay.getSmsUsed()){
             return ResponseEntity.badRequest().build();
         }
-        billingService.usedSMS(customerId,pay.getSmsUsed());
-        return ResponseEntity.accepted().build();
+        billingService.usedSMS(billing,pay.getSmsUsed());
+        return ResponseEntity.noContent().build();
 
     }
 
@@ -74,7 +77,7 @@ public class BillingReadingController {
     public ResponseEntity getBillAtAnyTime(@RequestHeader("customerId") String customerId){
         Billing billing = checkCustomerId( customerId);
         return billing!=null?
-                ResponseEntity.ok(billingService.getBillAtAnyTime(customerId)):
+                ResponseEntity.ok(billingService.getBillAtAnyTime(billing)):
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 

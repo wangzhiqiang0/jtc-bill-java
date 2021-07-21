@@ -44,7 +44,7 @@ public class BillingServiceTest {
 
     @Test
     public void givenCustomerIdAndPackageIdSubscriptPackage() {
-        Billing billing = billingService.subscriptPackage(TestUtils.CUSTOMER_ID,TestUtils.packageInfoList.get(0).getPackageId());
+        Billing billing = billingService.subscriptPackage(TestUtils.CUSTOMER_ID,TestUtils.packageInfoList.get(0));
 
         assertThat(billing.getCustomerId()).isEqualTo(TestUtils.CUSTOMER_ID);
         assertThat(billingDao.getBillingList().stream().filter(e -> e.getBillingId().equals(billing.getBillingId())).findFirst().get()).isEqualTo(billing);
@@ -62,7 +62,7 @@ public class BillingServiceTest {
         billing.setSmsPay(10);
         billing.setPhonePay(10);
         billingDao.getBillingList().add(billing);
-        assertThat(billingService.currentBillingPeriod(TestUtils.CUSTOMER_ID)).isEqualTo(exceptedCurrentBillingAllowance);
+        assertThat(billingService.currentBillingPeriod(billing)).isEqualTo(exceptedCurrentBillingAllowance);
     }
 
     @Test
@@ -76,7 +76,7 @@ public class BillingServiceTest {
         billing.setSmsPay(10);
         billing.setPhonePay(10);
         billingDao.getBillingList().add(billing);
-        assertThat(billingService.currentBillingPeriod(TestUtils.CUSTOMER_ID)).isEqualTo(exceptedCurrentBillingAllowance);
+        assertThat(billingService.currentBillingPeriod(billing)).isEqualTo(exceptedCurrentBillingAllowance);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class BillingServiceTest {
         billing.setSmsPay(10);
         billing.setPhonePay(10);
         billingDao.getBillingList().add(billing);
-        assertThat(billingService.currentBillingPeriod(TestUtils.CUSTOMER_ID)).isEqualTo(exceptedCurrentBillingAllowance);
+        assertThat(billingService.currentBillingPeriod(billing)).isEqualTo(exceptedCurrentBillingAllowance);
     }
 
     @Test
@@ -104,7 +104,7 @@ public class BillingServiceTest {
         billing.setSmsPay(10);
         billing.setPhonePay(10);
         billingDao.getBillingList().add(billing);
-        assertThat(billingService.currentBillingPeriod(TestUtils.CUSTOMER_ID)).isEqualTo(exceptedCurrentBillingAllowance);
+        assertThat(billingService.currentBillingPeriod(billing)).isEqualTo(exceptedCurrentBillingAllowance);
     }
 
     @Test
@@ -118,7 +118,7 @@ public class BillingServiceTest {
         billing.setSmsPay(0);
         billing.setPhonePay(0);
         billingDao.getBillingList().add(billing);
-        assertThat(billingService.currentBillingPeriod(TestUtils.CUSTOMER_ID)).isEqualTo(exceptedCurrentBillingAllowance);
+        assertThat(billingService.currentBillingPeriod(billing)).isEqualTo(exceptedCurrentBillingAllowance);
     }
 
     @Test
@@ -261,7 +261,7 @@ public class BillingServiceTest {
         billing.setSubscriptTime(LocalDate.now());
         billingList.add(billing);
         billingDao.setBillingList(billingList);
-        assertThat(billingService.usedPhone(TestUtils.CUSTOMER_ID,10).getPhoneUsed()).isEqualTo(11);
+        assertThat(billingService.usedPhone(billing,10).getPhoneUsed()).isEqualTo(11);
     }
 
     @Test
@@ -274,7 +274,7 @@ public class BillingServiceTest {
         billing.setSubscriptTime(LocalDate.now());
         billingList.add(billing);
         billingDao.setBillingList(billingList);
-        assertThat(billingService.usedSMS(TestUtils.CUSTOMER_ID,10).getSmsUsed()).isEqualTo(11);
+        assertThat(billingService.usedSMS(billing,10).getSmsUsed()).isEqualTo(11);
     }
 
     @Test
@@ -288,7 +288,7 @@ public class BillingServiceTest {
         billing.setSubscriptTime(LocalDate.now());
         billingList.add(billing);
         billingDao.setBillingList(billingList);
-        assertThat(billingService.getBillAtAnyTime(TestUtils.CUSTOMER_ID).getPay()).isEqualTo(packageInfo.getSubscriptionFee());
+        assertThat(billingService.getBillAtAnyTime(billing).getPay()).isEqualTo(packageInfo.getSubscriptionFee());
     }
     @Test
     public void givenCustomerIdGetBillAtAnyTimeNotFirstShouldReturn() {
@@ -301,7 +301,7 @@ public class BillingServiceTest {
         billing.setSubscriptTime(LocalDate.now());
         billingList.add(billing);
         billingDao.setBillingList(billingList);
-        assertThat(billingService.getBillAtAnyTime(TestUtils.CUSTOMER_ID).getPay()).isEqualTo(packageInfo.getSubscriptionFee());
+        assertThat(billingService.getBillAtAnyTime(billing).getPay()).isEqualTo(packageInfo.getSubscriptionFee());
     }
 
     @Test
@@ -317,7 +317,7 @@ public class BillingServiceTest {
         billingDao.setBillingList(billingList);
         double expectedPay = packageInfo.getSubscriptionFee().
                 add(packageInfo.getExtraSMSFee().multiply(new BigDecimal(5)).add(packageInfo.getExtraPhoneFee().multiply(new BigDecimal(5)))).doubleValue();
-        assertThat(billingService.getBillAtAnyTime(TestUtils.CUSTOMER_ID).getPay().doubleValue()).
+        assertThat(billingService.getBillAtAnyTime(billing).getPay().doubleValue()).
                 isEqualTo(expectedPay);
     }
 

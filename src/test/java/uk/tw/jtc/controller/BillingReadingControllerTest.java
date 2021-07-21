@@ -47,7 +47,7 @@ public class BillingReadingControllerTest {
 
     @Test
     public void givenCustomerIdAndPackageIdSubscriptPackage() {
-        assertThat(billingReadingController.subscriptPackage(TestUtils.CUSTOMER_ID, TestUtils.packageInfoList.get(0).getPackageId()).getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+        assertThat(billingReadingController.subscriptPackage(TestUtils.CUSTOMER_ID, TestUtils.packageInfoList.get(0).getPackageId()).getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         assertThat(billingDao.getBillingList().stream().filter(e -> e.getCustomerId().equals(TestUtils.CUSTOMER_ID)).
                 collect(Collectors.toList()).size()).isEqualTo(1);
     }
@@ -75,7 +75,7 @@ public class BillingReadingControllerTest {
 
     @Test
     public void execute() {
-        assertThat(billingReadingController.execute().getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+        assertThat(billingReadingController.execute().getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
 
@@ -93,7 +93,7 @@ public class BillingReadingControllerTest {
 
         Used pay = new Used();
         pay.setPhoneUsed(1);
-        assertThat(billingReadingController.usedPhone(TestUtils.CUSTOMER_ID, pay).getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+        assertThat(billingReadingController.usedPhone(TestUtils.CUSTOMER_ID, pay).getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class BillingReadingControllerTest {
 
         Used pay = new Used();
         pay.setSmsUsed(1);
-        assertThat(billingReadingController.usedSMS(TestUtils.CUSTOMER_ID, pay).getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+        assertThat(billingReadingController.usedSMS(TestUtils.CUSTOMER_ID, pay).getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
 

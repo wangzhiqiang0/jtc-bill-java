@@ -12,8 +12,7 @@ public interface BillingDao {
     Billing getBillByCustomerId(@Param("customerId") String customerId);
     void updatePhoneUsed(@Param("billingId") String billingId,@Param("phoneUsed") int phoneUsed);
     void updateSMSUsed(@Param("billingId") String billingId,@Param("smsUsed") int smsUsed);
-    void updatePhonePay(@Param("billingId") String billingId,@Param("phonePay") int phonePay);
-    void updateSMSPay(@Param("billingId") String billingId,@Param("smsPay") int smsPay);
+    void updateBillPay(@Param("billingId") String billingId,@Param("smsPay") int smsPay,@Param("phonePay") int phonePay);
     void updateFistToFalse(@Param("billingId") String billingId);
     List<Billing>  getBillingList();
 }

@@ -282,3 +282,10 @@ Parameters
 | `pay` | the money need to pay |
 
 
+# Running the app
+
+- ''Run docker-compose build''
+- ''Run docker-compose up''
+
+
+

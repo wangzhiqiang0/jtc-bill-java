@@ -148,124 +148,137 @@ Example package
 
 
 
-The following GET request, is an example request using CURL, sends the readings shown in the table above.
+The following POST request, is an example request using CURL, subscript the package for the customer.
 
 ```console
-curl --location --request GET 'localhost:8080/package/listPackages'
+curl --location --request POST 'localhost:8080/billing/subscriptPackage/39a62e4e-07d4-4940-a60b-c44aafe00dad' \
+--header 'customerId: 10015'
 ```
 
-The above command will return the list of package.
+The above command will subscript the package.
 
-### Get Stored Readings
+### Use phone 
 
 Endpoint
 
 ```text
-GET /readings/read/<smartMeterId>
+curl --location --request POST 'localhost:8080/billing/usedPhone' \
+--header 'customerId: 10015' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "phoneUsed":10
+}'
 ```
 
 Parameters
 
 | Parameter      | Description                              |
 | -------------- | ---------------------------------------- |
-| `smartMeterId` | One of the smart meters' id listed above |
+| `customerId` | the id of customer |
+| `phoneUsed` | the phone num of call |
 
-Retrieving readings using CURL
-
-```console
-$ curl "http://localhost:8080/readings/read/smart-meter-0"
-```
-
-Example output
-
-```json
-[
-  {
-    "time": "2020-11-29T08:00:00Z",
-    "reading": 0.0503
-  },
-  {
-    "time": "2020-11-29T08:01:00Z",
-    "reading": 0.0621
-  },
-  {
-    "time": "2020-11-29T08:02:00Z",
-    "reading": 0.0222
-  },
-  {
-    "time": "2020-11-29T08:03:00Z",
-    "reading": 0.0423
-  },
-  {
-    "time": "2020-11-29T08:04:00Z",
-    "reading": 0.0191
-  }
-]
-```
-
-### View Current Price Plan and Compare Usage Cost Against all Price Plans
+### Used SMS
 
 Endpoint
 
 ```text
-GET /price-plans/compare-all/<smartMeterId>
+curl --location --request POST 'localhost:8080/billing/usedSMS' \
+--header 'customerId: 10015' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "smsUsed":10
+}'
 ```
 
 Parameters
 
 | Parameter      | Description                              |
 | -------------- | ---------------------------------------- |
-| `smartMeterId` | One of the smart meters' id listed above |
+| `customerId` | the id of customer |
+| `smsUsed` | the phone num of sms |
 
-Retrieving readings using CURL
 
-```console
-$ curl "http://localhost:8080/price-plans/compare-all/smart-meter-0"
+### Get my bill at any time
+
+Endpoint
+
+```text
+curl --location --request GET 'localhost:8080/billing/getInvoiceAnyTime' \
+--header 'customerId: 10015'
 ```
+
+Parameters
+
+| Parameter      | Description                              |
+| -------------- | ---------------------------------------- |
+| `customerId` | the id of customer |
 
 Example output
 
 ```json
 {
-  "pricePlanComparisons": {
-    "price-plan-2": 0.0002,
-    "price-plan-1": 0.0004,
-    "price-plan-0": 0.002
-  },
-  "pricePlanId": "price-plan-0"
+  "pay": 38
 }
 ```
 
-### View Recommended Price Plans for Usage
+### Get my bill once billing run happened
 
 Endpoint
 
 ```text
-GET /price-plans/recommend/<smartMeterId>[?limit=<limit>]
+curl --location --request GET 'localhost:8080/invoice/active' \
+--header 'customerId: 10015'
 ```
 
 Parameters
 
-| Parameter      | Description                                          |
-| -------------- | ---------------------------------------------------- |
-| `smartMeterId` | One of the smart meters' id listed above             |
-| `limit`        | (Optional) limit the number of plans to be displayed |
-
-Retrieving readings using CURL
-
-```console
-$ curl "http://localhost:8080/price-plans/recommend/smart-meter-0?limit=2"
-```
+| Parameter      | Description                              |
+| -------------- | ---------------------------------------- |
+| `customerId` | the id of customer |
 
 Example output
 
 ```json
 [
   {
-    "price-plan-2": 0.0002
-  },
-  {
-    "price-plan-1": 0.0004
+    "invoiceId": "3bbd8b32-e15e-41eb-9b23-fbb06b5a1a4c",
+    "customerId": "10015",
+    "pay": 38,
+    "status": "active",
+    "createTime": "2021-07-21",
+    "lastUpdateTime": "2021-07-21"
   }
 ]
 ```
+
+### Generate bill for all customers
+
+Endpoint
+
+```text
+curl --location --request POST 'localhost:8080/billing/execute'
+```
+
+###  Pay my bill,
+
+Endpoint
+
+```text
+curl --location --request POST 'localhost:8080/invoice/paid' \
+--header 'customerId: 10015' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "invoiceId":"1647931b-571e-45b2-a3d6-36bb4d01bc2c",
+    "pay":63
+}'
+```
+
+Parameters
+
+| Parameter      | Description                              |
+| -------------- | ---------------------------------------- |
+| `customerId` | the id of customer |
+| `invoiceId` | the ID num of invoice |
+| `pay` | the money need to pay |
+
+

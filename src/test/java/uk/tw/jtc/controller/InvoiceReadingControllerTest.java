@@ -8,6 +8,7 @@ import uk.tw.jtc.enums.PayEnum;
 import uk.tw.jtc.mock.InvoiceDaoImpl;
 import uk.tw.jtc.model.Invoice;
 import uk.tw.jtc.request.RequestInvoice;
+import uk.tw.jtc.response.JwtResponse;
 import uk.tw.jtc.service.BillingService;
 import uk.tw.jtc.service.InvoiceService;
 import uk.tw.jtc.service.PackageReadingService;
@@ -40,7 +41,8 @@ public class InvoiceReadingControllerTest {
         invoice.setLastUpdateTime(LocalDate.now());
         invoiceList.add(invoice);
         invoiceDao.setInvoicesList(invoiceList);
-        assertThat(invoiceReadingController.getActiveInvoice(TestUtils.CUSTOMER_ID).getBody()).isEqualTo(invoiceList);
+        JwtResponse jwtResponse = (JwtResponse) invoiceReadingController.getActiveInvoice(TestUtils.CUSTOMER_ID).getBody();
+        assertThat(jwtResponse.getData()).isEqualTo(invoiceList);
     }
 
     @Test

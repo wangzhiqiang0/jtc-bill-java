@@ -9,6 +9,7 @@ import uk.tw.jtc.mock.PackageReadingDaoImpl;
 import uk.tw.jtc.model.Billing;
 import uk.tw.jtc.request.Used;
 import uk.tw.jtc.response.CurrentBillingAllowance;
+import uk.tw.jtc.response.JwtResponse;
 import uk.tw.jtc.service.BillingService;
 import uk.tw.jtc.service.InvoiceService;
 import uk.tw.jtc.service.PackageReadingService;
@@ -71,7 +72,8 @@ public class BillingReadingControllerTest {
         billing.setSmsPay(10);
         billing.setPhonePay(10);
         billingDao.getBillingList().add(billing);
-        assertThat(billingReadingController.currentBillingPeriod(TestUtils.CUSTOMER_ID).getBody()).isEqualTo(exceptedCurrentBillingAllowance);
+        JwtResponse jwtResponse = (JwtResponse) billingReadingController.currentBillingPeriod(TestUtils.CUSTOMER_ID).getBody();
+        assertThat(jwtResponse.getData()).isEqualTo(exceptedCurrentBillingAllowance);
     }
 
     @Test

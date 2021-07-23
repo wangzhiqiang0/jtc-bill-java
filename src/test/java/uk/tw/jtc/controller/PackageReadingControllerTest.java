@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import uk.tw.jtc.mock.PackageReadingDaoImpl;
+import uk.tw.jtc.response.JwtResponse;
 import uk.tw.jtc.service.PackageReadingService;
 import uk.tw.jtc.utils.TestUtils;
 
@@ -22,7 +23,8 @@ public class PackageReadingControllerTest {
 
     @Test
     public void listPackagesShouldReturnPackageList() {
-        assertThat(packageReadingController.listPackages().getBody()).isEqualTo(TestUtils.packageInfoList);
+        JwtResponse jwtResponse = (JwtResponse) packageReadingController.listPackages().getBody();
+        assertThat(jwtResponse.getData()).isEqualTo(TestUtils.packageInfoList);
     }
 
     @Test

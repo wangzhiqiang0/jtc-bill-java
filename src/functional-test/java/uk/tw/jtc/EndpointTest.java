@@ -14,6 +14,7 @@ import uk.tw.jtc.model.Invoice;
 import uk.tw.jtc.model.PackageInfo;
 import uk.tw.jtc.request.Used;
 import uk.tw.jtc.response.CurrentBillingAllowance;
+import uk.tw.jtc.response.JwtResponse;
 import uk.tw.jtc.response.Pay;
 import uk.tw.jtc.utils.TestUtils;
 
@@ -41,9 +42,10 @@ public class EndpointTest {
 
     @Test
     public void functionalTest() throws JsonProcessingException {
-        ResponseEntity<Object> response1 = restTemplate.getForEntity("/package/listPackages", Object.class);
-        assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.OK);
-        List<PackageInfo> packageInfoList = getObjectList((List) response1.getBody(), PackageInfo.class);
+        ResponseEntity<Object> response = restTemplate.getForEntity("/package/listPackages", Object.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        JwtResponse jwtResponse = getObject((Map) response.getBody(),JwtResponse.class);
+        List<PackageInfo> packageInfoList = getObjectList((List) jwtResponse.getData(), PackageInfo.class);
         PackageInfo packageInfo = packageInfoList.get(0);
 
         subscriptPackage(packageInfo);
@@ -90,7 +92,8 @@ public class EndpointTest {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
         ResponseEntity<Object> response = restTemplate.exchange("/invoice/active", HttpMethod.GET, entity, Object.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        List<Invoice> invoices = getObjectList((List<Map>) response.getBody(),Invoice.class);
+        JwtResponse jwtResponse = getObject((Map) response.getBody(),JwtResponse.class);
+        List<Invoice> invoices = getObjectList((List<Map>) jwtResponse.getData(),Invoice.class);
 
        return invoices;
 
@@ -104,7 +107,8 @@ public class EndpointTest {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
         ResponseEntity<Object> response = restTemplate.exchange("/billing/getInvoiceAnyTime", HttpMethod.GET, entity, Object.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        Pay pay = getObject((Map) response.getBody(), Pay.class);
+        JwtResponse<Pay> jwtResponse= getObject((Map) response.getBody(), JwtResponse.class);
+        Pay pay = getObject((Map) jwtResponse.getData(),Pay.class);
 
         assertThat(pay.getPay().doubleValue()).isEqualTo(getInvoicePay(packageInfo,phoneUsed,smsUsed));
     }
@@ -163,7 +167,8 @@ public class EndpointTest {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
         ResponseEntity<Object> response = restTemplate.exchange("/billing/currentBillingPeriod", HttpMethod.GET, entity, Object.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        CurrentBillingAllowance allowance = getObject((Map) response.getBody(), CurrentBillingAllowance.class);
+        JwtResponse jwtResponse = getObject((Map) response.getBody(),JwtResponse.class);
+        CurrentBillingAllowance allowance = getObject((Map) jwtResponse.getData(), CurrentBillingAllowance.class);
         int phoneExcepted = usedPhone < packageInfo.getPhoneLimit() ? packageInfo.getPhoneLimit() - usedPhone : 0;
         int smsExcepted = usedSms < packageInfo.getSmsLimit() ? packageInfo.getSmsLimit() - usedPhone : 0;
         assertThat(allowance.getSmsAllowance()).isEqualTo(smsExcepted);

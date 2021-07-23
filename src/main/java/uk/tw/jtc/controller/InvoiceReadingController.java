@@ -7,6 +7,7 @@ import uk.tw.jtc.enums.PayEnum;
 import uk.tw.jtc.model.Billing;
 import uk.tw.jtc.model.Invoice;
 import uk.tw.jtc.request.RequestInvoice;
+import uk.tw.jtc.response.JwtResponse;
 import uk.tw.jtc.service.InvoiceService;
 
 import java.util.List;
@@ -27,9 +28,9 @@ public class InvoiceReadingController {
     public ResponseEntity getActiveInvoice(@RequestHeader("customerId") String customerId) {
         List<Invoice> invoice = invoiceService.getActiveInvoice(customerId);
         if(null == invoice){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(JwtResponse.notFound());
         }
-        return ResponseEntity.ok(invoice);
+        return ResponseEntity.ok(JwtResponse.ok(invoice));
     }
 
     @PostMapping("/paid")
@@ -42,11 +43,11 @@ public class InvoiceReadingController {
                 invoice.setStatus(PayEnum.PAID.getStatus());
                 invoiceService.updateInvoice(invoice);
             }else {
-                return ResponseEntity.badRequest().build();
+                return ResponseEntity.badRequest().body(JwtResponse.badRequest());
             }
 
         }else {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(JwtResponse.badRequest());
         }
 
         return ResponseEntity.noContent().build();

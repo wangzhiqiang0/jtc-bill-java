@@ -1,12 +1,14 @@
 package uk.tw.jtc.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 import java.time.LocalDate;
 @Setter
 @Getter
+@NoArgsConstructor
 public class Billing {
     private String billingId;
     private String customerId;
@@ -24,9 +26,6 @@ public class Billing {
         this.billingId = billingId;
         this.customerId = customerId;
         this.packageInfo = packageInfo;
-    }
-
-    public Billing() {
     }
 
 }

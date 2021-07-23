@@ -6,4 +6,4 @@ RUN gradle clean build
 FROM openjdk:8-jre-slim
 RUN mkdir /app
 COPY --from=build /home/gradle/src/build/libs/*.jar /app/jwtapi.jar
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-Dspring.profiles.active=container", "-jar", "/app/jwtapi.jar"]
+ENTRYPOINT ["java","-Dspring.profiles.active=container", "-jar", "/app/jwtapi.jar"]

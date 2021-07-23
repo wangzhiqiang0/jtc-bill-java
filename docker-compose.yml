@@ -4,15 +4,12 @@ services:
     build: ./postgres
     container_name: postgres
     volumes:
-      - "/tmp/pgsql/pg_data:/var/lib/postgresql/data"
-      - "/tmp/pgsql/pg_backup:/backups"
+      - /tmp/pgsql/pg_data:/var/lib/postgresql/data
     env_file: .env
     expose:
       - 5432
     ports:
       - 5432:5432
-    labels:
-      - "traefik.enable=false"
     logging:
       driver: json-file
       options:
@@ -22,23 +19,13 @@ services:
   jwtapi:
     build: .
     networks:
-      - web
       - default
-    volumes:
-      - "/tmp/jwtapi/data:/opt/jwt_server/datadir"
-      - "/tmp/jwtapi/logs:/opt/jwt_server/logs"
     hostname: localhost
     ports:
       - 8080:8080
     depends_on:
       - postgres
     env_file: .env
-    labels:
-      - "traefik.enable=true"
-      - "traefik.backend=server"
-      - "traefik.frontend.rule=Host:${VIRTUAL_HOST}"
-      - "traefik.docker.network=web"
-      - "traefik.port=8111"
     logging:
       driver: json-file
       options:

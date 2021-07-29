@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface InvoiceDao {
     void createInvoice(@Param("invoices") List<Invoice> invoices);
-    void updateInvoice(@Param("invoiceId")String invoiceId,@Param("status")String status);
-
+    void createNewInvoice(@Param("invoice") Invoice invoice);
     List<Invoice> getActiveInvoice(@Param("customerId")String customerId);
+    Invoice getInvoiceByInvoiceIdAndCustomerId(@Param("customerId")String customerId,@Param("invoiceId") String invoiceId);
 }

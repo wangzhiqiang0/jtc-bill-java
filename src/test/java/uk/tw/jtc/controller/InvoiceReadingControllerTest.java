@@ -3,19 +3,17 @@ package uk.tw.jtc.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import uk.tw.jtc.dao.InvoiceDao;
-import uk.tw.jtc.enums.PayEnum;
 import uk.tw.jtc.mock.InvoiceDaoImpl;
+import uk.tw.jtc.mock.PaymentDaoImpl;
 import uk.tw.jtc.model.Invoice;
-import uk.tw.jtc.request.RequestInvoice;
+import uk.tw.jtc.request.PaymentRequest;
 import uk.tw.jtc.response.JtcResponse;
-import uk.tw.jtc.service.BillingService;
 import uk.tw.jtc.service.InvoiceService;
-import uk.tw.jtc.service.PackageReadingService;
+import uk.tw.jtc.service.PaymentService;
 import uk.tw.jtc.utils.TestUtils;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,50 +27,31 @@ public class InvoiceReadingControllerTest {
     InvoiceDaoImpl invoiceDao = new InvoiceDaoImpl();
     @BeforeEach
     public void setUp() {
-        invoiceReadingController = new InvoiceReadingController(new InvoiceService(invoiceDao));
+        PaymentService paymentService = new PaymentService(new PaymentDaoImpl());
+        invoiceReadingController = new InvoiceReadingController(new InvoiceService(invoiceDao,
+                null,null,paymentService),paymentService);
     }
 
+
     @Test
-    public void givenCustomerIdGetActiveInvoice() {
+    public void paidInvoiceShouldReturnErrorResponseWhenNotFoundInvoice() {
         List<Invoice> invoiceList = new ArrayList<>();
-        Invoice invoice = new Invoice(UUID.randomUUID().toString(),TestUtils.CUSTOMER_ID);
-        invoice.setPay(TestUtils.packageInfoList.get(0).getSubscriptionFee());
-       // invoice.setStatus(PayEnum.ACTIVE.getStatus());
-       // invoice.setLastUpdateTime(LocalDate.now());
-        invoiceList.add(invoice);
         invoiceDao.setInvoicesList(invoiceList);
-        JtcResponse JtcResponse = (JtcResponse) invoiceReadingController.getActiveInvoice(TestUtils.CUSTOMER_ID).getBody();
-        assertThat(JtcResponse.getData()).isEqualTo(invoiceList);
+        PaymentRequest paymentRequest = new PaymentRequest();
+        paymentRequest.setInvoiceId(UUID.randomUUID().toString());
+        paymentRequest.setPay(new BigDecimal(38));
+       assertThat(invoiceReadingController.paidPayment(TestUtils.CUSTOMER_ID, paymentRequest).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
-
     @Test
-    public void paidInvoiceShouldReturn() {
+    public void paidInvoiceShouldReturnErrorResponseWhenPayNotMatch() {
         List<Invoice> invoiceList = new ArrayList<>();
-        Invoice invoice = new Invoice(UUID.randomUUID().toString(),TestUtils.CUSTOMER_ID);
-        invoice.setPay(TestUtils.packageInfoList.get(0).getSubscriptionFee());
-       // invoice.setStatus(PayEnum.ACTIVE.getStatus());
-        //invoice.setLastUpdateTime(LocalDate.now());
-        invoiceList.add(invoice);
         invoiceDao.setInvoicesList(invoiceList);
-        RequestInvoice requestInvoice = new RequestInvoice();
-        requestInvoice.setInvoiceId(invoice.getInvoiceId());
-        requestInvoice.setPay(invoice.getPay());
-        assertThat(invoiceReadingController.paidInvoice(TestUtils.CUSTOMER_ID,requestInvoice).getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-    }
-
-    @Test
-    public void paidInvoiceShouldReturnErrorResponse() {
-        List<Invoice> invoiceList = new ArrayList<>();
-        Invoice invoice = new Invoice(UUID.randomUUID().toString(),TestUtils.CUSTOMER_ID);
-        invoice.setPay(TestUtils.packageInfoList.get(0).getSubscriptionFee());
-       // invoice.setStatus(PayEnum.ACTIVE.getStatus());
-       // invoice.setLastUpdateTime(LocalDate.now());
+        PaymentRequest paymentRequest = new PaymentRequest();
+        paymentRequest.setInvoiceId(UUID.randomUUID().toString());
+        paymentRequest.setPay(new BigDecimal(38));
+        Invoice invoice = new Invoice(TestUtils.CUSTOMER_ID,new BigDecimal(32),4,2, Instant.now());
         invoiceList.add(invoice);
-        invoiceDao.setInvoicesList(invoiceList);
-
-        RequestInvoice requestInvoice = new RequestInvoice();
-        requestInvoice.setInvoiceId(UUID.randomUUID().toString());
-        requestInvoice.setPay(invoice.getPay());
-        assertThat(invoiceReadingController.paidInvoice(TestUtils.CUSTOMER_ID,requestInvoice).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        paymentRequest.setInvoiceId(invoice.getInvoiceId());
+        assertThat(invoiceReadingController.paidPayment(TestUtils.CUSTOMER_ID, paymentRequest).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 }

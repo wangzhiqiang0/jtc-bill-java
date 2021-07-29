@@ -1,25 +1,26 @@
 package uk.tw.jtc.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uk.tw.jtc.enums.PayEnum;
-import uk.tw.jtc.model.Billing;
 import uk.tw.jtc.model.Invoice;
-import uk.tw.jtc.request.RequestInvoice;
+import uk.tw.jtc.request.PaymentRequest;
 import uk.tw.jtc.response.JtcResponse;
 import uk.tw.jtc.service.InvoiceService;
+import uk.tw.jtc.service.PaymentService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/invoice")
 public class InvoiceReadingController {
     private InvoiceService invoiceService;
+    PaymentService paymentService;
 
-    public InvoiceReadingController(InvoiceService invoiceService) {
+    public InvoiceReadingController(InvoiceService invoiceService,PaymentService paymentService) {
         this.invoiceService = invoiceService;
+        this.paymentService = paymentService;
     }
 
 
@@ -34,23 +35,22 @@ public class InvoiceReadingController {
         return ResponseEntity.ok(JtcResponse.ok(invoice));
     }
 
+
+
+    @PostMapping("/execute")
+    public ResponseEntity execute(){
+        invoiceService.generateInvoice();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+
     @PostMapping("/paid")
-    public ResponseEntity paidInvoice(@RequestHeader("customerId")String customerId,@RequestBody RequestInvoice requestInvoice) {
-        Optional<Invoice> invoiceOptional = invoiceService.getActiveInvoice(customerId).stream().
-                filter(e -> e.getInvoiceId().equals(requestInvoice.getInvoiceId())).findFirst();
-        if(invoiceOptional.isPresent()){
-            if(invoiceOptional.get().getPay().doubleValue() == requestInvoice.getPay().doubleValue()){
-                Invoice invoice = invoiceOptional.get();
-               // invoice.setStatus(PayEnum.PAID.getStatus());
-                invoiceService.updateInvoice(invoice);
-            }else {
-                return ResponseEntity.badRequest().body(JtcResponse.badRequest());
-            }
-
-        }else {
-            return ResponseEntity.badRequest().body(JtcResponse.badRequest());
+    public ResponseEntity paidPayment(@RequestHeader("customerId")String customerId, @RequestBody PaymentRequest paymentRequest) {
+        Invoice invoice = invoiceService.getInvoiceByInvoiceIdAndCustomerId(customerId, paymentRequest.getInvoiceId());
+        if (invoice == null || invoice.getPay().compareTo(paymentRequest.getPay()) != 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(JtcResponse.badRequest());
         }
-
-        return ResponseEntity.noContent().build();
+        paymentService.createPayment(customerId,paymentRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

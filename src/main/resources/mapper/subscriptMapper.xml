@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="uk.tw.jtc.dao.SubscriptDao">
+
+    <resultMap id="subscript" type="uk.tw.jtc.model.Subscript">
+        <result property="subscriptId" jdbcType="VARCHAR" column="subscript_id" />
+        <result property="customerId" jdbcType="VARCHAR" column="customer_id" />
+        <result property="subscriptTime" jdbcType="TIMESTAMP" column="subscript_time" />
+        <association column="package_id" property="packageInfo" javaType="uk.tw.jtc.model.PackageInfo" select="uk.tw.jtc.dao.PackageReadingDao.getPackageById"></association>
+    </resultMap>
+
+    <select id="getSubscriptByCustomerId" resultMap="subscript">
+        select * from jtc_subscript where customer_id = #{customerId}
+    </select>
+
+
+    <insert id="createNewSubscript" parameterType="uk.tw.jtc.model.Subscript">
+        insert into
+        jtc_subscript(subscript_id,customer_id,package_id,subscript_time)
+        values
+        (#{subscript.subscriptId},#{subscript.customerId},#{subscript.packageInfo.packageId},#{subscript.subscriptTime});
+    </insert>
+
+    <select id="getSubscriptList" resultMap="subscript">
+        select * from jtc_subscript
+    </select>
+</mapper>

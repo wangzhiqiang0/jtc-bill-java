@@ -2,39 +2,51 @@
 <mapper namespace="uk.tw.jtc.dao.InvoiceDao">
 
     <resultMap id="invoice" type="uk.tw.jtc.model.Invoice">
-
         <result property="invoiceId" jdbcType="VARCHAR" column="invoice_id" />
         <result property="customerId" jdbcType="VARCHAR" column="customer_id" />
         <result property="pay" jdbcType="DECIMAL" column="pay" />
-        <result property="status" jdbcType="DECIMAL" column="status" />
-        <result property="createTime" jdbcType="DECIMAL" column="create_time" />
-        <result property="lastUpdateTime" jdbcType="DECIMAL" column="last_update_time" />
+        <result property="phoneUsage" jdbcType="INTEGER" column="phone_usage" />
+        <result property="smsUsage" jdbcType="INTEGER" column="sms_usage" />
+        <result property="createdAt" jdbcType="TIMESTAMP" column="create_at" />
 
     </resultMap>
 
     <insert id="createInvoice">
-        insert into jtc_invoice (invoice_id, customer_id,pay,status,create_time,last_update_time)
+        insert into jtc_invoice (invoice_id, customer_id,pay,phone_usage,sms_usage,create_at)
         values
         <foreach collection="invoices" item="invoice" separator=",">
             (
             #{invoice.invoiceId},
             #{invoice.customerId},
             #{invoice.pay},
-            #{invoice.status},
-            now(),
-            now()
+            #{invoice.phoneUsage},
+            #{invoice.smsUsage},
+            #{invoice.createdAt}
             )
         </foreach>
     </insert>
 
+    <insert id="createNewInvoice">
+        insert into jtc_invoice (invoice_id, customer_id,pay,phone_usage,sms_usage,create_at)
+        values
+            (
+            #{invoice.invoiceId},
+            #{invoice.customerId},
+            #{invoice.pay},
+            #{invoice.phoneUsage},
+            #{invoice.smsUsage},
+            #{invoice.createdAt}
+            )
+    </insert>
+
+
+
     <select id="getActiveInvoice" resultMap="invoice">
-        select * from jtc_invoice where customer_id = #{customerId} and status = 'active'
+        select * from jtc_invoice where customer_id = #{customerId}
     </select>
-
-    <update id="updateInvoice" >
-        update  jtc_invoice set status = #{status} ,last_update_time = now() where invoice_id = #{invoiceId}
-    </update>
-
+    <select id="getInvoiceByInvoiceIdAndCustomerId" resultMap="invoice">
+        select * from jtc_invoice where customer_id = #{customerId} and invoice_id = #{invoiceId}
+    </select>
 
 
 

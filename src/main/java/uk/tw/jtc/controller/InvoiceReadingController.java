@@ -7,7 +7,7 @@ import uk.tw.jtc.enums.PayEnum;
 import uk.tw.jtc.model.Billing;
 import uk.tw.jtc.model.Invoice;
 import uk.tw.jtc.request.RequestInvoice;
-import uk.tw.jtc.response.JwtResponse;
+import uk.tw.jtc.response.JtcResponse;
 import uk.tw.jtc.service.InvoiceService;
 
 import java.util.List;
@@ -24,13 +24,14 @@ public class InvoiceReadingController {
 
 
 
+
     @GetMapping("/active")
-    public ResponseEntity getActiveInvoice(@RequestHeader("customerId") String customerId) {
+    public ResponseEntity getActiveInvoice(@RequestHeader("customerId")  String customerId) {
         List<Invoice> invoice = invoiceService.getActiveInvoice(customerId);
         if(null == invoice){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(JwtResponse.notFound());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(JtcResponse.notFound());
         }
-        return ResponseEntity.ok(JwtResponse.ok(invoice));
+        return ResponseEntity.ok(JtcResponse.ok(invoice));
     }
 
     @PostMapping("/paid")
@@ -40,14 +41,14 @@ public class InvoiceReadingController {
         if(invoiceOptional.isPresent()){
             if(invoiceOptional.get().getPay().doubleValue() == requestInvoice.getPay().doubleValue()){
                 Invoice invoice = invoiceOptional.get();
-                invoice.setStatus(PayEnum.PAID.getStatus());
+               // invoice.setStatus(PayEnum.PAID.getStatus());
                 invoiceService.updateInvoice(invoice);
             }else {
-                return ResponseEntity.badRequest().body(JwtResponse.badRequest());
+                return ResponseEntity.badRequest().body(JtcResponse.badRequest());
             }
 
         }else {
-            return ResponseEntity.badRequest().body(JwtResponse.badRequest());
+            return ResponseEntity.badRequest().body(JtcResponse.badRequest());
         }
 
         return ResponseEntity.noContent().build();

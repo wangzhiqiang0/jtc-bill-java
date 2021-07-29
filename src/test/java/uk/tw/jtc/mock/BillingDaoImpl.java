@@ -31,21 +31,21 @@ public class BillingDaoImpl implements BillingDao {
     @Override
     public void updatePhoneUsed(String billingId, int phoneUsed) {
         Billing billing = billingList.stream().filter( e -> e.getBillingId().equals(billingId)).findFirst().get();
-        billing.setPhoneUsed(phoneUsed);
+       // billing.setPhoneUsed(phoneUsed);
     }
 
     @Override
     public void updateSMSUsed(String billingId, int smsUsed) {
         Billing billing = billingList.stream().filter( e -> e.getBillingId().equals(billingId)).findFirst().get();
-        billing.setSmsUsed(smsUsed);
+       // billing.setSmsUsed(smsUsed);
     }
 
 
     @Override
     public void updateBillPay(String billingId, int smsPay, int phonePay) {
         Billing billing = billingList.stream().filter( e -> e.getBillingId().equals(billingId)).findFirst().get();
-        billing.setSmsPay(smsPay);
-        billing.setPhonePay(phonePay);
+      //  billing.setSmsPay(smsPay);
+       // billing.setPhonePay(phonePay);
     }
 
     @Override
@@ -56,6 +56,6 @@ public class BillingDaoImpl implements BillingDao {
     @Override
     public void updateFistToFalse(String billingId) {
         Billing billing = billingList.stream().filter( e -> e.getBillingId().equals(billingId)).findFirst().get();
-        billing.setFirst(false);
+       // billing.setFirst(false);
     }
 }

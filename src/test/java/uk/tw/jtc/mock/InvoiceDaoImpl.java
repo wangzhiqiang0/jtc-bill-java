@@ -19,7 +19,7 @@ public class InvoiceDaoImpl implements InvoiceDao {
     @Override
     public void updateInvoice(String invoiceId, String status) {
         Invoice invoice = invoicesList.stream().filter(e -> e.getInvoiceId().equals(invoiceId)).findFirst().get();
-        invoice.setStatus(status);
+        //invoice.setStatus(status);
     }
 
     @Override

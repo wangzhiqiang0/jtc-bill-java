@@ -1,0 +1,35 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="uk.tw.jtc.dao.UsageDetailsDao">
+
+    <resultMap id="usage" type="uk.tw.jtc.model.Usage">
+        <result property="usageDetailsId" jdbcType="VARCHAR" column="usage_details_id" />
+        <result property="customerId" jdbcType="VARCHAR" column="customer_id" />
+        <result property="usage" jdbcType="DECIMAL" column="usage" />
+        <result property="type" jdbcType="VARCHAR" column="type" />
+        <result property="incurredAt" jdbcType="TIMESTAMP" column="in_curred_at" />
+        <result property="createdAt" jdbcType="TIMESTAMP" column="create_at" />
+    </resultMap>
+
+    <insert id="addNewUsage" parameterType="uk.tw.jtc.model.Usage">
+        insert into jtc_usage (usage_details_id, customer_id,usage,type,in_curred_at,create_at)
+        values
+        (#{usage.usageDetailsId},#{usage.customerId},#{usage.usage},#{usage.type},#{usage.incurredAt},#{usage.createdAt});
+    </insert>
+
+    <select id="getUsageListByCustomerId" resultMap="usage">
+        select * from jtc_usage where customer_id = #{customerId}
+    </select>
+    <select id="getCurrentCycleUsageList" resultMap="usage">
+        select * from jtc_usage usage left join   jtc_bill  bill
+        on usage.customer_id = bill.customer_id
+        where to_char(bill.subscript_time,'dd')=to_char(now(),'dd')
+    </select>
+
+    <select id="getCurrentCycleUsageListByCustomerId" resultMap="usage">
+        select * from jtc_usage usage  where customer_id = #{customerId} and in_curred_at between #{start} AND #{end};
+    </select>
+
+
+
+</mapper>
+

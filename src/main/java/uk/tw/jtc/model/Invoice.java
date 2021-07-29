@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.Objects;
 
 @Setter
@@ -13,9 +13,17 @@ public class Invoice {
     private String invoiceId;
     private String customerId;
     private BigDecimal pay;
-    private String status;
-    private LocalDate createTime;
-    private LocalDate lastUpdateTime;
+    private int phoneUsage;
+    private int smsUsage;
+    private Instant createTime;
+
+    public Invoice(String customerId, BigDecimal pay, int phoneUsage, int smsUsage, Instant createTime) {
+        this.customerId = customerId;
+        this.pay = pay;
+        this.phoneUsage = phoneUsage;
+        this.smsUsage = smsUsage;
+        this.createTime = createTime;
+    }
 
     public Invoice(String invoiceId, String customerId) {
         this.invoiceId = invoiceId;
@@ -30,11 +38,11 @@ public class Invoice {
         if (this == o) return true;
         if (!(o instanceof Invoice)) return false;
         Invoice invoice = (Invoice) o;
-        return customerId.equals(invoice.customerId) && pay.equals(invoice.pay) && status.equals(invoice.status);
+        return phoneUsage == invoice.phoneUsage && smsUsage == invoice.smsUsage && customerId.equals(invoice.customerId) && pay.equals(invoice.pay);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(customerId, pay, status);
+        return Objects.hash(customerId, pay, phoneUsage, smsUsage);
     }
 }

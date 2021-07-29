@@ -25,22 +25,25 @@ public class InvoiceService {
     }
 
     public void updateInvoice(Invoice invoice) {
-        invoiceDao.updateInvoice(invoice.getInvoiceId(), invoice.getStatus());
+        //invoiceDao.updateInvoice(invoice.getInvoiceId(), invoice.getStatus());
     }
 
     public List<Invoice> getActiveInvoice(String customerId) {
         return invoiceDao.getActiveInvoice(customerId);
     }
 
-    public Invoice generateInvoice(Function<Billing, BigDecimal> function, Billing billing) {
+    public Invoice generateInvoice(Billing billing,BigDecimal charge) {
         Invoice invoice = new Invoice(UUID.randomUUID().toString(), billing.getCustomerId());
-        invoice.setPay(function.apply(billing));
-        invoice.setStatus(PayEnum.ACTIVE.getStatus());
-        invoice.setCreateTime(LocalDate.now());
-        invoice.setLastUpdateTime(LocalDate.now());
+        invoice.setPay(charge);
+       // invoice.setStatus(PayEnum.ACTIVE.getStatus());
+     //   invoice.setCreateTime(LocalDate.now());
+       // invoice.setLastUpdateTime(LocalDate.now());
+
         return invoice;
 
     }
+
+
 
 
 }

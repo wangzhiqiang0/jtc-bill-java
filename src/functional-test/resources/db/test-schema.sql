@@ -31,3 +31,13 @@ CREATE TABLE IF NOT EXISTS jtc_invoice(
 	create_time timestamp with time zone not null,
 	last_update_time timestamp with time zone not null
 );
+
+drop table IF EXISTS jtc_usage;
+CREATE TABLE IF NOT EXISTS jtc_usage(
+	usage_details_id varchar(36) not null,
+	customer_id varchar(36) not null,
+	usage NUMERIC not null,
+	type VARCHAR(10)  not null,
+	in_curred_at timestamp ,
+	create_at timestamp
+);

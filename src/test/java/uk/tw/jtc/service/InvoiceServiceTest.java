@@ -30,14 +30,14 @@ public class InvoiceServiceTest {
         List<Invoice> exceptedInvoices = new ArrayList<>();
         Invoice invoice = new Invoice(UUID.randomUUID().toString(),TestUtils.CUSTOMER_ID);
         invoice.setPay(TestUtils.packageInfoList.get(0).getSubscriptionFee());
-        invoice.setStatus(PayEnum.ACTIVE.getStatus());
-        invoice.setLastUpdateTime(LocalDate.now());
+    //    invoice.setStatus(PayEnum.ACTIVE.getStatus());
+     //   invoice.setLastUpdateTime(LocalDate.now());
 
 
         Invoice invoice1 = new Invoice(UUID.randomUUID().toString(),UUID.randomUUID().toString());
         invoice1.setPay(TestUtils.packageInfoList.get(0).getSubscriptionFee());
-        invoice1.setStatus(PayEnum.ACTIVE.getStatus());
-        invoice1.setLastUpdateTime(LocalDate.now());
+     //   invoice1.setStatus(PayEnum.ACTIVE.getStatus());
+      //  invoice1.setLastUpdateTime(LocalDate.now());
 
         invoices.add(invoice);
         invoices.add(invoice1);

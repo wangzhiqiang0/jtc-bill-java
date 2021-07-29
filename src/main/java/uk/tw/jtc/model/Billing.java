@@ -5,26 +5,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.util.UUID;
+
 @Setter
 @Getter
 @NoArgsConstructor
 public class Billing {
     private String billingId;
     private String customerId;
-    private int phoneUsed;
-    private int smsUsed;
-    private int phonePay;
-    private int smsPay;
-    private boolean first;
-    private LocalDate lastUpdateTime;
-    private LocalDate subscriptTime;
-
+    private Instant subscriptTime;
     private PackageInfo packageInfo;
 
-    public Billing(String billingId, String customerId, PackageInfo packageInfo) {
-        this.billingId = billingId;
+    public Billing(String customerId, Instant subscriptTime,PackageInfo packageInfo) {
+        this.billingId = UUID.randomUUID().toString();
         this.customerId = customerId;
+        this.subscriptTime = subscriptTime;
         this.packageInfo = packageInfo;
     }
 

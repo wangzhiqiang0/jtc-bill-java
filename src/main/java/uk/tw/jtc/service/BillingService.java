@@ -10,6 +10,7 @@ import uk.tw.jtc.response.CurrentBillingAllowance;
 import uk.tw.jtc.response.Pay;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.function.Function;
 
 @Service
 public class BillingService {
+    public List<Billing> getNeedToProceedCustomerList;
     private PackageReadingService packageReadingService;
     private InvoiceService invoiceService;
 
@@ -33,97 +35,43 @@ public class BillingService {
 
     @Transactional
     public Billing subscriptPackage(String customerId, PackageInfo info) {
-        Billing billing = new Billing(UUID.randomUUID().toString(), customerId, info);
+        Billing billing = new Billing(customerId, Instant.now(), info);
         billingDao.createNewBill(billing);
+
         return billing;
     }
 
     public CurrentBillingAllowance currentBillingPeriod(Billing billing) {
         CurrentBillingAllowance currentBillingAllowance = new CurrentBillingAllowance();
-        int phoneExtra = billing.getPhoneUsed() - billing.getPhonePay() - billing.getPackageInfo().getPhoneLimit();
-        if (phoneExtra < 0) {
-            currentBillingAllowance.setPhoneAllowance(-phoneExtra);
-        }
-        int smsExtra = billing.getSmsUsed() - billing.getSmsPay() - billing.getPackageInfo().getSmsLimit();
-        if (smsExtra < 0) {
-            currentBillingAllowance.setSmsAllowance(-smsExtra);
-        }
+//        PaymentService paymentService = PaymentService.getPaymentService(billing);
+//        int phoneExtra = paymentService.getExtraPhone();
+//        if (phoneExtra < 0) {
+//            currentBillingAllowance.setPhoneAllowance(-phoneExtra);
+//        }
+//        int smsExtra = paymentService.getExtraSms();
+//        if (smsExtra < 0) {
+//            currentBillingAllowance.setSmsAllowance(-smsExtra);
+//        }
         return currentBillingAllowance;
     }
 
-    @Transactional
-    public List<Invoice> generateBill() {
-        List<Invoice> invoiceList = new ArrayList<>();
-        List<Billing> billingListList = billingDao.getBillingList();
-        billingListList.forEach(e -> {
-            if (e.isFirst()) {
-                invoiceList.add(invoiceService.generateInvoice(getNewSubFunction(), e));
-                billingDao.updateFistToFalse(e.getBillingId());
 
-            } else if (e.getSubscriptTime().getDayOfMonth() == LocalDate.now().getDayOfMonth()) {
-                invoiceList.add(invoiceService.generateInvoice(getNoFirstFunction(), e));
-                billingDao.updateBillPay(e.getBillingId(), e.getSmsUsed(), e.getPhoneUsed());
-
-            }
-        });
-        if (!invoiceList.isEmpty()) {
-            invoiceService.createInvoice(invoiceList);
-        }
-        return invoiceList;
-
-    }
-
-    private Function<Billing, BigDecimal> getNoFirstFunction() {
-        Function<Billing, BigDecimal> noFirstFunction = x -> {
-            BigDecimal result = x.getPackageInfo().getSubscriptionFee();
-            return result.add(getExtraPhoneFee(x)).add(getExtraSMSFee(x));
-        };
-        return noFirstFunction;
-    }
-
-    private BigDecimal getExtraPhoneFee(Billing billing) {
-        int extra = billing.getPhoneUsed() - billing.getPhonePay() - billing.getPackageInfo().getPhoneLimit();
-        return extra > 0 ? billing.getPackageInfo().getExtraPhoneFee().multiply(new BigDecimal(extra))
-                : new BigDecimal(0);
-    }
-
-    private BigDecimal getExtraSMSFee(Billing billing) {
-        int extra = billing.getSmsUsed() - billing.getSmsPay() - billing.getPackageInfo().getSmsLimit();
-        return extra > 0 ? billing.getPackageInfo().getExtraSMSFee().multiply(new BigDecimal(extra))
-                : new BigDecimal(0);
-    }
-
-
-    private Function<Billing, BigDecimal> getNewSubFunction() {
-        return x -> x.getPackageInfo().getSubscriptionFee();
-    }
-
-
-    public Billing usedPhone(Billing billing, int minute) {
-        billingDao.updatePhoneUsed(billing.getBillingId(), billing.getPhoneUsed() + minute);
-
-        return billing;
-    }
-
-    public Billing usedSMS(Billing billing, int num) {
-        billingDao.updateSMSUsed(billing.getBillingId(), billing.getSmsUsed() + num);
-        return billing;
-    }
 
 
     public Pay getBillAtAnyTime(Billing billing) {
         Pay pay = new Pay();
-        if (billing.isFirst()) {
-            pay.setPay(getNewSubFunction().apply(billing));
-        } else {
 
-            pay.setPay(getNoFirstFunction().apply(billing));
-        }
+       // pay.setPay(PaymentService.getPaymentService(billing).getCharge());
+
         return pay;
     }
 
 
     public Billing getBillByComerId(String customerId) {
         return billingDao.getBillByCustomerId(customerId);
+    }
+
+    public List<Billing> getNeedToProceedCustomerList() {
+        return billingDao.getBillingList().stream().filter(e->e.getSubscriptTime().);
     }
 }

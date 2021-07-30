@@ -6,15 +6,15 @@ import org.springframework.http.MediaType;
 import java.util.Map;
 
 public class HttpRequestBuilder {
-    public static HttpEntity<String> getUsageHttpEntity(Object obj) {
-        HttpEntity<String> entity = new HttpEntity(obj, getHttpHeaders());
+    public static HttpEntity<String> getUsageHttpEntity(Object obj,String customerId) {
+        HttpEntity<String> entity = new HttpEntity(obj, getHttpHeaders(customerId));
         return entity;
     }
 
-    public static HttpHeaders getHttpHeaders() {
+    public static HttpHeaders getHttpHeaders(String customerId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("customerId", TestUtils.CUSTOMER_ID);
+        headers.add("customerId", customerId);
         return headers;
     }
 }

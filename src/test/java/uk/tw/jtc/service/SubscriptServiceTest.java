@@ -48,5 +48,4 @@ public class SubscriptServiceTest {
         Assertions.assertThat(subscriptService.isInvoiceDate(Instant.parse("2021-09-17T00:00:00Z"), LocalDate.of(2021, 9, 17))).isEqualTo(false);
     }
 
-
 }

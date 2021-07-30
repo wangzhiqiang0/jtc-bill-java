@@ -28,11 +28,7 @@ public class InvoiceReadingController {
 
     @GetMapping("/active")
     public ResponseEntity getActiveInvoice(@RequestHeader("customerId")  String customerId) {
-        List<Invoice> invoice = invoiceService.getActiveInvoice(customerId);
-        if(null == invoice){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(JtcResponse.notFound());
-        }
-        return ResponseEntity.ok(JtcResponse.ok(invoice));
+        return ResponseEntity.ok(JtcResponse.ok(invoiceService.getActiveInvoice(customerId)));
     }
 
 
@@ -52,5 +48,15 @@ public class InvoiceReadingController {
         }
         paymentService.createPayment(customerId,paymentRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/allowance")
+    public ResponseEntity allowance(@RequestHeader("customerId") String customerId){
+       return ResponseEntity.ok(JtcResponse.ok(invoiceService.getInvoiceAllowance(customerId)));
+    }
+
+    @GetMapping("/currentPay")
+    public ResponseEntity currentPay(@RequestHeader("customerId") String customerId){
+        return ResponseEntity.ok(JtcResponse.ok(invoiceService.getRealTimePay(customerId)));
     }
 }

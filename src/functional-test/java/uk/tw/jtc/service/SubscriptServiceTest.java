@@ -1,5 +1,6 @@
 package uk.tw.jtc.service;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,6 +44,16 @@ public class SubscriptServiceTest {
                 new Subscript("customer1", Instant.parse("2021-06-17T15:00:00Z"), packageInfo),
                 new Subscript("customer3", Instant.parse("2021-07-16T16:01:00Z"), packageInfo),
                 new Subscript("customer5", Instant.parse("2021-08-16T16:01:00Z"), packageInfo)));
+    }
+
+    @Test
+    public void givenDateThenReturnInvoiceDate() {
+        String customerId = UUID.randomUUID().toString();
+        PackageInfo packageInfo = TestUtils.packageInfoList.get(0);
+        subscriptDao.createNewSubscript(new Subscript(customerId, Instant.parse("2021-06-02T10:00:00Z"), packageInfo));
+        Assertions.assertThat(subscriptService.getInvoiceDate(LocalDate.of(2021,7,30),customerId)).isEqualTo(LocalDate.of(2021,8,2));
+        Assertions.assertThat(subscriptService.getInvoiceDate(LocalDate.of(2021,12,30),customerId)).isEqualTo(LocalDate.of(2022,1,2));
+        Assertions.assertThat(subscriptService.getInvoiceDate(LocalDate.of(2021,7,1),customerId)).isEqualTo(LocalDate.of(2021,7,2));
     }
 
 }

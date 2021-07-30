@@ -12,7 +12,5 @@ public interface UsageDetailsDao {
 
     void addNewUsage(@Param("usage") Usage usage);
 
-    List<Usage> getCurrentCycleUsageList();
-
     List<Usage> getCurrentCycleUsageListByCustomerId(@Param("customerId")String customerId,@Param("start")Instant start,@Param("end")Instant end);
 }

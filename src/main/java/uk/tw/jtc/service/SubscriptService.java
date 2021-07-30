@@ -3,10 +3,9 @@ package uk.tw.jtc.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.tw.jtc.dao.SubscriptDao;
+import uk.tw.jtc.model.Invoice;
 import uk.tw.jtc.model.Subscript;
 import uk.tw.jtc.model.PackageInfo;
-import uk.tw.jtc.response.CurrentBillingAllowance;
-import uk.tw.jtc.response.Pay;
 import uk.tw.jtc.utis.JtcTime;
 
 import java.time.Instant;
@@ -35,33 +34,8 @@ public class SubscriptService {
         return billing;
     }
 
-    public CurrentBillingAllowance currentBillingPeriod(Subscript billing) {
-        CurrentBillingAllowance currentBillingAllowance = new CurrentBillingAllowance();
-//        PaymentService paymentService = PaymentService.getPaymentService(billing);
-//        int phoneExtra = paymentService.getExtraPhone();
-//        if (phoneExtra < 0) {
-//            currentBillingAllowance.setPhoneAllowance(-phoneExtra);
-//        }
-//        int smsExtra = paymentService.getExtraSms();
-//        if (smsExtra < 0) {
-//            currentBillingAllowance.setSmsAllowance(-smsExtra);
-//        }
-        return currentBillingAllowance;
-    }
 
-
-
-
-    public Pay getBillAtAnyTime(Subscript billing) {
-        Pay pay = new Pay();
-
-       // pay.setPay(PaymentService.getPaymentService(billing).getCharge());
-
-        return pay;
-    }
-
-
-    public Subscript getBillByComerId(String customerId) {
+    public Subscript getSubscriptByCustomerId(String customerId) {
         return subscriptDao.getSubscriptByCustomerId(customerId);
     }
 
@@ -72,5 +46,21 @@ public class SubscriptService {
     public boolean isInvoiceDate(Instant subscriptTime,LocalDate invoiceDate) {
         return JtcTime.instantToLocalDate(subscriptTime).getDayOfMonth() == invoiceDate.getDayOfMonth()
                 && JtcTime.instantToLocalDate(subscriptTime).compareTo(invoiceDate) != 0;
+    }
+    public LocalDate getInvoiceDate(String customerId) {
+        return getInvoiceDate(LocalDate.now(),customerId);
+    }
+
+    public LocalDate getInvoiceDate(LocalDate invoiceDate, String customerId) {
+        LocalDate subscript = JtcTime.instantToLocalDate(subscriptDao.getSubscriptByCustomerId(customerId).getSubscriptTime());
+        if (invoiceDate.getDayOfMonth() > subscript.getDayOfMonth()) {
+            if (invoiceDate.getMonthValue() == 12) {
+                return LocalDate.of(invoiceDate.getYear() + 1, 1, subscript.getDayOfMonth());
+            } else {
+                return LocalDate.of(invoiceDate.getYear(), invoiceDate.getMonthValue() + 1, subscript.getDayOfMonth());
+            }
+        } else {
+            return LocalDate.of(invoiceDate.getYear(), invoiceDate.getMonthValue(), subscript.getDayOfMonth());
+        }
     }
 }
